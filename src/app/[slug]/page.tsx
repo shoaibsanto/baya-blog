@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
+import { DeadlineBadge } from "@/components/ui/DeadlineBadge";
 import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { TableOfContents } from "@/components/article/TableOfContents";
 import { ArticleMeta } from "@/components/article/ArticleMeta";
@@ -14,7 +16,8 @@ import { OrganizationInfoBox } from "@/components/article/OrganizationInfoBox";
 import { PositionsTable } from "@/components/article/PositionsTable";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCategory } from "@/config/site.config";
-import { getArticleBySlug, listRelated, SAMPLE_ARTICLES } from "@/content/sample-articles";
+import { SAMPLE_ARTICLES } from "@/content/sample-articles";
+import { getArticleBySlug, listRelated, slugify } from "@/lib/content/articles";
 import { renderBlocks, extractHeadings } from "@/lib/render/renderBlocks";
 import { generateArticleMetadata, generateCanonical } from "@/lib/seo/metadata";
 import {
@@ -26,6 +29,10 @@ import {
 
 export const revalidate = 3600;
 
+/**
+ * RULE 3: Static generation — generateStaticParams for all articles.
+ * RULE 34: Revalidation — ISR with 1-hour revalidation.
+ */
 export function generateStaticParams() {
   return SAMPLE_ARTICLES.map((a) => ({ slug: a.slug }));
 }
@@ -37,6 +44,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return generateArticleMetadata(article);
 }
 
+/**
+ * RULE 94: Final publishing guarantee — verified content, SEO metadata,
+ * canonical, schema, internal links, category relationship, static generation.
+ */
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = getArticleBySlug(slug);
@@ -49,9 +60,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     : listRelated(article).map((a) => ({ slug: a.slug, title: a.title }));
   const jobPostingSchema = generateJobPostingSchema(article);
   const canonicalUrl = generateCanonical(article.slug);
+  const orgSlug = article.job ? slugify(article.job.organization.name) : null;
 
   return (
     <Container className="py-8">
+      {/* RULE 23: Schema markup — Article + JobPosting + Breadcrumb + FAQ */}
       <JsonLd data={generateArticleSchema(article)} />
       {jobPostingSchema && <JsonLd data={jobPostingSchema} />}
       <JsonLd
@@ -65,6 +78,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <JsonLd data={generateFAQSchema(article.faq) as object} />
       )}
 
+      {/* RULE 22: Breadcrumb — visible UI + JSON-LD consistent */}
       <Breadcrumb
         items={[
           { label: "হোম", href: "/" },
@@ -76,6 +90,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <article className="prose-baya mt-3">
         <div className="flex flex-wrap gap-1.5">
           {category && <Badge>{category.name}</Badge>}
+          {article.job?.deadline && <DeadlineBadge deadline={article.job.deadline} />}
         </div>
 
         <h1 className="mt-2 text-2xl font-extrabold leading-snug text-foreground sm:text-3xl">
@@ -108,6 +123,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         )}
 
         <TableOfContents headings={headings} />
+
+        {/* RULE 18: Organization connectivity — link to organization page */}
+        {orgSlug && article.job?.organization && (
+          <div className="my-4 rounded-md border border-border bg-surface p-3 text-sm">
+            <span className="text-muted">প্রতিষ্ঠান: </span>
+            <Link href={`/organization/${orgSlug}`} className="font-semibold text-brand-dark hover:underline">
+              {article.job.organization.name}
+            </Link>
+          </div>
+        )}
 
         {article.job && (
           <>
@@ -148,13 +173,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   );
 }
 
-/** Renders the free-form body blocks, inserting the positions table right after the "positions" heading when job data exists. */
 function renderBlocksWithJobData(article: (typeof SAMPLE_ARTICLES)[number]) {
   const blocks = renderBlocks(article.body);
   if (!article.job?.positions?.length) return blocks;
 
   const positionsHeadingIndex = article.body.findIndex(
-    (b) => b.type === "heading" && b.id === "positions"
+    (b) => b.type === "heading" && b.id === "positions",
   );
   if (positionsHeadingIndex === -1) return blocks;
 
@@ -162,7 +186,7 @@ function renderBlocksWithJobData(article: (typeof SAMPLE_ARTICLES)[number]) {
   withTable.splice(
     positionsHeadingIndex + 1,
     0,
-    <PositionsTable key="positions-table" positions={article.job.positions} />
+    <PositionsTable key="positions-table" positions={article.job.positions} />,
   );
   return withTable;
 }

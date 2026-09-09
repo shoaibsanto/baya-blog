@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { CATEGORIES, SITE } from "@/config/site.config";
 
+/**
+ * RULE 72: Footer link architecture — About, Contact, categories, navigation.
+ * No hundreds of SEO links dumped — clean and purposeful.
+ */
 export function Footer() {
   return (
     <footer className="mt-16 border-t border-border bg-surface">
@@ -23,12 +27,37 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">অন্যান্য</p>
+            <p className="text-sm font-semibold text-foreground">BAYA Blog</p>
             <ul className="mt-2 space-y-1.5">
+              <li>
+                <Link href="/about" className="text-sm text-muted hover:text-brand-dark">
+                  আমাদের সম্পর্কে
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-sm text-muted hover:text-brand-dark">
+                  যোগাযোগ
+                </Link>
+              </li>
+              <li>
+                <Link href="/organization" className="text-sm text-muted hover:text-brand-dark">
+                  প্রতিষ্ঠান
+                </Link>
+              </li>
+              <li>
+                <Link href="/qualification" className="text-sm text-muted hover:text-brand-dark">
+                  শিক্ষাগত যোগ্যতা
+                </Link>
+              </li>
               <li>
                 <Link href="/search" className="text-sm text-muted hover:text-brand-dark">
                   খুঁজুন
                 </Link>
+              </li>
+              <li>
+                <a href="/feed.xml" className="text-sm text-muted hover:text-brand-dark" rel="alternate" type="application/rss+xml">
+                  RSS ফিড
+                </a>
               </li>
               <li>
                 <a href="/sitemap.xml" className="text-sm text-muted hover:text-brand-dark">

@@ -12,6 +12,10 @@ const bangla = Hind_Siliguri({
   display: "swap",
 });
 
+/**
+ * RULE 29: Metadata engine — OG, Twitter, canonical.
+ * RULE 25: Self-referencing canonical on every page.
+ */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: { default: SITE.name, template: `%s | ${SITE.name}` },
@@ -26,11 +30,19 @@ export const metadata: Metadata = {
     card: DEFAULT_OG_IMAGE ? "summary_large_image" : "summary",
     images: DEFAULT_OG_IMAGE ? [DEFAULT_OG_IMAGE.url] : undefined,
   },
+  alternates: {
+    types: {
+      "application/rss+xml": [{ url: "/feed.xml", title: "BAYA Blog RSS Feed" }],
+    },
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="bn" className={`${bangla.variable} h-full antialiased`}>
+      <head>
+        <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href="/feed.xml" />
+      </head>
       <body className="min-h-full flex flex-col">
         <Header />
         <main className="flex-1">{children}</main>
