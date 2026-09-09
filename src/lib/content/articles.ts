@@ -237,7 +237,21 @@ export function findOrphanArticles(): Article[] {
 
 // ─── Slug helpers ───────────────────────────────────────────────────────
 
+/** Map Bengali organization names to stable English slugs. */
+const ORG_SLUG_MAP: Record<string, string> = {
+  "বাংলাদেশ কৃষি ব্যাংক": "bangladesh-krishi-bank",
+  "সোনালী ব্যাংক পিএলসি": "sonali-bank",
+  "স্কয়ার গ্রুপ": "square-group",
+  "ব্র্যাক": "brac",
+  "রাজশাহী বিশ্ববিদ্যালয়": "rajshahi-university",
+  "বাংলাদেশ ব্যাংক": "bangladesh-bank",
+};
+
+/** Convert Bengali org name to a stable URL slug. */
 export function slugify(text: string): string {
+  // Check explicit mapping first
+  if (ORG_SLUG_MAP[text]) return ORG_SLUG_MAP[text];
+  // Fall back to standard slugify for English text
   return text
     .toLowerCase()
     .replace(/[^\w\s-]/g, "")
