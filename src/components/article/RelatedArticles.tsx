@@ -12,7 +12,7 @@ export function RelatedArticles({ items }: { items: RelatedArticleRef[] }) {
         {items.map((item) => (
           <li key={item.slug}>
             <Link
-              href={`/${item.hub}/${item.slug}`}
+              href={`/${item.slug}`}
               className="block rounded-md border border-border p-4 text-sm font-medium text-foreground hover:border-brand hover:text-brand-dark"
             >
               {item.title}

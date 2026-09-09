@@ -3,6 +3,7 @@ import { Callout } from "@/components/article/Callout";
 import { InfoTable } from "@/components/article/InfoTable";
 import { StepByStep } from "@/components/article/StepByStep";
 import { OfficialSourceBlock } from "@/components/article/OfficialSourceBlock";
+import { Checklist } from "@/components/article/Checklist";
 
 export function renderBlocks(blocks: ContentBlock[]) {
   return blocks.map((block, i) => {
@@ -37,6 +38,8 @@ export function renderBlocks(blocks: ContentBlock[]) {
         );
       case "steps":
         return <StepByStep key={i} steps={block.steps} />;
+      case "checklist":
+        return <Checklist key={i} items={block.items} />;
       case "official-source":
         return <OfficialSourceBlock key={i} source={block.source} />;
       default:

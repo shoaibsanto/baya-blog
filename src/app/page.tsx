@@ -1,94 +1,97 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { Badge } from "@/components/ui/Badge";
-import { HUBS, getHub } from "@/config/site.config";
+import { JobCard } from "@/components/home/JobCard";
+import { FilterBar } from "@/components/home/FilterBar";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { CATEGORIES } from "@/config/site.config";
 import { listLatestArticles } from "@/content/sample-articles";
-import { formatBnDate } from "@/lib/format";
+import { filterArticles } from "@/lib/jobFilters";
 import { generatePageMetadata } from "@/lib/seo/metadata";
+import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo/schema";
 
-export const metadata = generatePageMetadata({
-  title: "BAYA Blog — বাংলাদেশ সরকারি চাকরি, শিক্ষা ও সেবা তথ্য",
-  description:
-    "বাংলাদেশ সরকারি চাকরির বিজ্ঞপ্তি, SSC/HSC ফলাফল, NID, পাসপোর্ট ও অন্যান্য সরকারি সেবা সম্পর্কিত নির্ভরযোগ্য তথ্য এক জায়গায়।",
-  path: "/",
-  absoluteTitle: true,
-});
+export const revalidate = 3600;
 
-export default function HomePage() {
-  const latest = listLatestArticles(6);
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const hasFilter = Boolean(params.category || params.qualification || params.deadline);
+  return generatePageMetadata({
+    title: "BAYA Blog — সরকারি, বেসরকারি ও ব্যাংক চাকরির খবর",
+    description:
+      "বাংলাদেশের সরকারি, বেসরকারি, ব্যাংক ও এনজিও চাকরির সবচেয়ে হালনাগাদ নিয়োগ বিজ্ঞপ্তি — যাচাইকৃত তথ্য, সহজ ভাষায়।",
+    path: "/",
+    absoluteTitle: true,
+    noindex: hasFilter,
+  });
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const params = await searchParams;
+  const allArticles = listLatestArticles(100);
+  const filtered = filterArticles(allArticles, {
+    category: params.category,
+    qualification: params.qualification,
+    deadline: params.deadline,
+  });
 
   return (
     <Container className="py-8">
-      <section className="rounded-lg bg-brand-light px-6 py-10 text-center sm:py-14">
+      <JsonLd data={generateOrganizationSchema()} />
+      <JsonLd data={generateWebSiteSchema()} />
+
+      <section className="rounded-lg bg-brand-light px-6 py-8 text-center sm:py-10">
         <h1 className="text-2xl font-extrabold text-brand-dark sm:text-3xl">
-          বাংলাদেশের সরকারি তথ্য ও সেবা, এক জায়গায়
+          বাংলাদেশের চাকরির খবর, এক জায়গায়
         </h1>
-        <p className="mx-auto mt-3 max-w-xl text-sm text-foreground/80 sm:text-base">
-          চাকরির বিজ্ঞপ্তি, পরীক্ষার ফলাফল, NID, পাসপোর্ট ও অন্যান্য সরকারি সেবা সম্পর্কিত হালনাগাদ তথ্য।
+        <p className="mx-auto mt-2 max-w-xl text-sm text-foreground/80 sm:text-base">
+          সরকারি, বেসরকারি, ব্যাংক ও এনজিও চাকরির যাচাইকৃত নিয়োগ বিজ্ঞপ্তি প্রতিদিন হালনাগাদ হয়।
         </p>
-        <form action="/search" className="mx-auto mt-6 flex max-w-md items-center gap-2">
-          <label htmlFor="q" className="sr-only">
-            অনুসন্ধান করুন
-          </label>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            placeholder="যেমন: SSC রেজাল্ট, পাসপোর্ট নবায়ন..."
-            className="h-11 flex-1 rounded-md border border-border bg-background px-4 text-sm outline-none focus:border-brand"
-          />
-          <button
-            type="submit"
-            className="h-11 rounded-md bg-brand px-5 text-sm font-semibold text-white hover:bg-brand-dark"
+      </section>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        {CATEGORIES.map((cat) => (
+          <Link
+            key={cat.slug}
+            href={`/category/${cat.slug}`}
+            className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:border-brand hover:text-brand-dark sm:text-sm"
           >
-            খুঁজুন
-          </button>
-        </form>
-      </section>
+            {cat.name}
+          </Link>
+        ))}
+      </div>
 
-      <section aria-labelledby="categories-heading" className="mt-10">
-        <h2 id="categories-heading" className="mb-4 text-lg font-bold text-foreground">
-          জনপ্রিয় বিভাগ
+      <div className="mt-5">
+        <FilterBar
+          defaultCategory={params.category}
+          defaultQualification={params.qualification}
+          defaultDeadline={params.deadline}
+        />
+      </div>
+
+      <section aria-labelledby="listing-heading" className="mt-6">
+        <h2 id="listing-heading" className="sr-only">
+          চাকরির তালিকা
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
-          {HUBS.map((hub) => (
-            <Link
-              key={hub.slug}
-              href={`/${hub.slug}`}
-              className="rounded-md border border-border p-4 text-center text-sm font-medium text-foreground hover:border-brand hover:text-brand-dark"
-            >
-              {hub.name}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section aria-labelledby="latest-heading" className="mt-10">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 id="latest-heading" className="text-lg font-bold text-foreground">
-            সাম্প্রতিক আপডেট
-          </h2>
-        </div>
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {latest.map((article) => {
-            const hub = getHub(article.hub);
-            return (
+        {filtered.length === 0 ? (
+          <p className="rounded-md border border-border p-6 text-center text-sm text-muted">
+            আপনার নির্বাচিত ফিল্টার অনুযায়ী কোনো চাকরি পাওয়া যায়নি। ফিল্টার পরিবর্তন করে আবার চেষ্টা করুন।
+          </p>
+        ) : (
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {filtered.map((article) => (
               <li key={article.id}>
-                <Link
-                  href={`/${article.hub}/${article.slug}`}
-                  className="block rounded-md border border-border p-4 hover:border-brand"
-                >
-                  <div className="mb-2 flex items-center gap-2">
-                    {hub && <Badge>{hub.shortName}</Badge>}
-                    <span className="text-xs text-muted">{formatBnDate(article.updatedAt)}</span>
-                  </div>
-                  <p className="font-semibold text-foreground">{article.title}</p>
-                  <p className="mt-1 line-clamp-2 text-sm text-muted">{article.excerpt}</p>
-                </Link>
+                <JobCard article={article} />
               </li>
-            );
-          })}
-        </ul>
+            ))}
+          </ul>
+        )}
       </section>
     </Container>
   );

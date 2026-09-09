@@ -34,18 +34,20 @@ export function generatePageMetadata({
       siteName: SITE.name,
       locale: "bn_BD",
       type: "website",
-      images: [DEFAULT_OG_IMAGE],
+      images: DEFAULT_OG_IMAGE ? [DEFAULT_OG_IMAGE] : undefined,
     },
     twitter: {
-      card: "summary_large_image",
-      images: [DEFAULT_OG_IMAGE.url],
+      card: DEFAULT_OG_IMAGE ? "summary_large_image" : "summary",
+      images: DEFAULT_OG_IMAGE ? [DEFAULT_OG_IMAGE.url] : undefined,
     },
   };
 }
 
 export function generateArticleMetadata(article: Article): Metadata {
-  const path = `${article.hub}/${article.slug}`;
-  const canonical = generateCanonical(path);
+  const canonical = generateCanonical(article.slug);
+  const image = article.featuredImage
+    ? { url: article.featuredImage.src, alt: article.featuredImage.alt }
+    : DEFAULT_OG_IMAGE;
   return {
     title: article.title,
     description: article.excerpt,
@@ -60,15 +62,11 @@ export function generateArticleMetadata(article: Article): Metadata {
       type: "article",
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt,
-      images: [
-        article.featuredImage
-          ? { url: article.featuredImage.src, alt: article.featuredImage.alt }
-          : DEFAULT_OG_IMAGE,
-      ],
+      images: image ? [image] : undefined,
     },
     twitter: {
-      card: "summary_large_image",
-      images: [article.featuredImage?.src ?? DEFAULT_OG_IMAGE.url],
+      card: image ? "summary_large_image" : "summary",
+      images: image ? [image.url] : undefined,
     },
   };
 }

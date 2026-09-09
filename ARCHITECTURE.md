@@ -1,9 +1,67 @@
 # BAYA Blog — Architecture Proposal (Phase 1)
 
-Status: **approved** — decisions below are locked. Phase 2 (design system) in progress.
+Status: **superseded by the Pivot v2 note below.** Phase 1 (§1 onward) documents the original 10-hub
+"broad government information platform" concept and is kept for history — do not use it to justify the
+current taxonomy or URL scheme; the Pivot v2 section is authoritative.
 Domain: baya.blog · Stack: Next.js (App Router) + TypeScript + Tailwind CSS
 
-**Approved decisions:**
+---
+
+## Pivot v2 — Job-Circular Platform (current, authoritative)
+
+**Decision (approved 2026-09-09):** BAYA Blog pivoted from the original 10-hub "broad government services"
+concept to a **job-circular-focused platform**, modeled on bdgovtjob.net's category taxonomy and per-post
+content template, but built to be meaningfully better on UI/UX, structured data, and AI/crawler-friendliness
+than the source site (which the user explicitly asked to exceed, not just match).
+
+**What changed from Phase 1:**
+- The 10-hub taxonomy (Jobs/Education/NID/Passport/Birth-Registration/etc.) is retired. Replaced by a
+  **10-category job taxonomy** in `src/config/site.config.ts` (`CATEGORIES`): সরকারি চাকরি, ব্যাংক চাকরি,
+  প্রাইভেট চাকরি, এনজিও চাকরি, ফার্মাসিউটিক্যালস চাকরি, গ্রুপ অব কোম্পানি চাকরি, বিশ্ববিদ্যালয় চাকরি, ডিফেন্স
+  চাকরি, টেলিটক অনলাইন আবেদন, হট জবস. A post can belong to one primary `category` plus `additionalCategories`
+  (mirrors bdgovtjob.net's multi-category tagging, e.g. a govt bank job also tagged হট জবস + টেলিটক).
+- URLs are now **flat**: `/[slug]/` for articles (no category prefix, exactly like bdgovtjob.net's
+  `/brdb-job-circular/`), `/category/[slug]/` for category archives. The old `/[hub]/[slug]/` structure is gone.
+- Content model (`src/types/index.ts`) gained a `JobCircularMeta` (`job` field on `Article`): organization
+  info, position table, vacancy/age/fee/deadline, required documents, qualification levels (for filtering).
+  `ContentType` narrowed to job-relevant types only (`job-circular`, `job-result`, `admit-card`, `guide`,
+  `notice`).
+- Homepage (`src/app/page.tsx`) now has a **real, server-rendered filter bar** (category / qualification /
+  deadline-window) via GET query params — filtered views are `noindex,follow` (canonical stays `/`) to avoid
+  duplicate-content bloat, exactly the kind of thing rule "avoid thin/duplicate pages" is for.
+- **Schema markup deliberately goes further than the source site**: bdgovtjob.net's job posts carry only
+  Article + BreadcrumbList (verified by inspection 2026-09-09) — no JobPosting, no FAQPage, despite having FAQ
+  content. BAYA Blog emits all four on every job-circular post: `Article`, `JobPosting` (proper Google-for-Jobs
+  markup — `generateJobPostingSchema` in `src/lib/seo/schema.ts`), `BreadcrumbList`, and `FAQPage` when FAQ
+  content exists. Sitewide `Organization` + `WebSite` (with `SearchAction`) schema renders once, on the
+  homepage.
+- **No star-rating/review widgets** were replicated from the source (it shows a "4.3/5 — 89 votes" widget with
+  no visible review mechanism) — fabricating `AggregateRating` schema without real reviews is exactly the kind
+  of fake-review pattern this project's own rules (§23, §41) forbid.
+- **Share buttons** (Facebook, WhatsApp, X, Messenger, copy-link) were added on every article — the source site
+  has none; the user explicitly asked for this regardless.
+- **Logo is intentionally not used anywhere right now** (header is text-only "BAYA Blog") per explicit user
+  request — brand assets from the earlier session remain in `public/brand/` for when the user wants them back.
+  `DEFAULT_OG_IMAGE` in `site.config.ts` is `null`; featured/OG images are per-article-optional, used only when
+  they'd actually help sharing/SEO, not forced.
+- Sample content (`src/content/sample-articles.ts`) is **original placeholder text** demonstrating the full
+  template (Krishi Bank, Sonali Bank, Square Group, BRAC, Rajshahi University) — organization names are real
+  public institutions, but the circular details/numbers are invented examples, not copied from bdgovtjob.net's
+  actual postings. Real content ingestion is still a future step.
+
+**Still open / not yet done:**
+- Custom domain `baya.blog` isn't connected to the Vercel project yet (no DNS access from this environment) —
+  live URL is currently the Vercel-assigned domain.
+- An Age Calculator utility (bdgovtjob.net has one) was scoped out of this pass — flagged as a nice-to-have,
+  not core to the pivot.
+- AI-crawler-specific accessibility (llms.txt / clean-markdown endpoints, per the `ai-markdown-rendering`
+  skill) has not been added yet — worth doing given the user's "AI বট" friendliness ask.
+
+---
+
+## Phase 1 (historical — superseded, kept for reference only)
+
+**Approved decisions (Phase 1, no longer in effect):**
 - Slugs are English/transliterated (`/education/ssc-result/`); all visible titles, UI copy, and content stay Bengali.
 - 10-hub taxonomy from §1 is locked, including the merged শিক্ষা ও ফলাফল hub and the new প্রবাসী সেবা hub.
 

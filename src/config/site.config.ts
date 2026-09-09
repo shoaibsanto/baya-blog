@@ -1,100 +1,104 @@
-export type HubSlug =
-  | "jobs"
-  | "education"
-  | "nid"
-  | "passport"
-  | "birth-registration"
-  | "government-services"
-  | "forms"
-  | "benefits"
-  | "expat-services"
-  | "other";
+export type CategorySlug =
+  | "government-jobs"
+  | "bank-jobs"
+  | "private-jobs"
+  | "ngo-jobs"
+  | "pharma-jobs"
+  | "group-of-company-jobs"
+  | "university-jobs"
+  | "defence-jobs"
+  | "teletalk-application"
+  | "hot-jobs";
 
-export interface HubConfig {
-  slug: HubSlug;
+export interface CategoryConfig {
+  slug: CategorySlug;
   name: string;
   shortName: string;
   description: string;
 }
 
-export const HUBS: HubConfig[] = [
+export const CATEGORIES: CategoryConfig[] = [
   {
-    slug: "jobs",
-    name: "চাকরি",
-    shortName: "চাকরি",
-    description: "সরকারি চাকরির বিজ্ঞপ্তি, আবেদন প্রক্রিয়া, প্রবেশপত্র ও ফলাফল",
+    slug: "government-jobs",
+    name: "সরকারি চাকরি",
+    shortName: "সরকারি চাকরি",
+    description: "সরকারি অধিদপ্তর, মন্ত্রণালয় ও স্বায়ত্তশাসিত প্রতিষ্ঠানের নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "education",
-    name: "শিক্ষা ও ফলাফল",
-    shortName: "শিক্ষা",
-    description: "SSC, HSC, ভর্তি পরীক্ষা, রুটিন, প্রবেশপত্র ও ফলাফল",
+    slug: "bank-jobs",
+    name: "ব্যাংক চাকরি",
+    shortName: "ব্যাংক চাকরি",
+    description: "সরকারি ও বেসরকারি ব্যাংক-বীমার নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "nid",
-    name: "এনআইডি",
-    shortName: "এনআইডি",
-    description: "জাতীয় পরিচয়পত্র সংশোধন, ডাউনলোড ও পুনঃইস্যু সংক্রান্ত তথ্য",
+    slug: "private-jobs",
+    name: "প্রাইভেট চাকরি",
+    shortName: "প্রাইভেট চাকরি",
+    description: "বেসরকারি প্রতিষ্ঠান ও কোম্পানির নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "passport",
-    name: "পাসপোর্ট",
-    shortName: "পাসপোর্ট",
-    description: "ই-পাসপোর্ট আবেদন, নবায়ন, ফি ও অ্যাপয়েন্টমেন্ট",
+    slug: "ngo-jobs",
+    name: "এনজিও চাকরি",
+    shortName: "এনজিও",
+    description: "দেশি-বিদেশি এনজিও ও উন্নয়ন সংস্থার নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "birth-registration",
-    name: "জন্মনিবন্ধন ও নাগরিক সনদ",
-    shortName: "জন্মনিবন্ধন",
-    description: "জন্মনিবন্ধন যাচাই, সংশোধন ও নাগরিক সনদ সংক্রান্ত তথ্য",
+    slug: "pharma-jobs",
+    name: "ফার্মাসিউটিক্যালস চাকরি",
+    shortName: "ফার্মা",
+    description: "ফার্মাসিউটিক্যাল কোম্পানির মেডিকেল প্রমোশন অফিসারসহ অন্যান্য নিয়োগ",
   },
   {
-    slug: "government-services",
-    name: "সরকারি সেবা",
-    shortName: "সরকারি সেবা",
-    description: "ট্রেড লাইসেন্স, টিন, land record সহ অন্যান্য সরকারি সেবা",
+    slug: "group-of-company-jobs",
+    name: "গ্রুপ অব কোম্পানি চাকরি",
+    shortName: "গ্রুপ অব কোম্পানি",
+    description: "বড় শিল্প গ্রুপ ও কনগ্লোমারেটের নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "forms",
-    name: "সরকারি ফরম ও আবেদন",
-    shortName: "ফরম",
-    description: "প্রয়োজনীয় সরকারি ফরম ও আবেদন প্রক্রিয়ার নির্দেশনা",
+    slug: "university-jobs",
+    name: "বিশ্ববিদ্যালয় চাকরি",
+    shortName: "বিশ্ববিদ্যালয়",
+    description: "পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয়ের শিক্ষক ও কর্মকর্তা নিয়োগ",
   },
   {
-    slug: "benefits",
-    name: "ভাতা ও সুবিধা",
-    shortName: "ভাতা",
-    description: "সরকারি ভাতা, অনুদান ও সুবিধা সংক্রান্ত তথ্য",
+    slug: "defence-jobs",
+    name: "ডিফেন্স চাকরি",
+    shortName: "ডিফেন্স",
+    description: "সেনা, নৌ, বিমান বাহিনী ও প্রতিরক্ষা সংশ্লিষ্ট নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "expat-services",
-    name: "প্রবাসী সেবা",
-    shortName: "প্রবাসী",
-    description: "প্রবাসীদের জন্য ভিসা, রেমিট্যান্স ও দূতাবাস সংক্রান্ত সেবা",
+    slug: "teletalk-application",
+    name: "টেলিটক অনলাইন আবেদন",
+    shortName: "অনলাইনে আবেদন",
+    description: "টেলিটকের মাধ্যমে অনলাইনে আবেদনযোগ্য সরকারি নিয়োগ বিজ্ঞপ্তি",
   },
   {
-    slug: "other",
-    name: "অন্যান্য",
-    shortName: "অন্যান্য",
-    description: "অন্যান্য গুরুত্বপূর্ণ সরকারি তথ্য ও সেবা",
+    slug: "hot-jobs",
+    name: "হট জবস",
+    shortName: "হট জবস",
+    description: "আবেদনের শেষ সময় ঘনিয়ে আসা ও বেশি খোঁজা হচ্ছে এমন নিয়োগ বিজ্ঞপ্তি",
   },
 ];
+
+export const QUALIFICATIONS = [
+  { value: "jsc", label: "৮ম শ্রেণি পাস / JSC" },
+  { value: "ssc", label: "এসএসসি / সমমান" },
+  { value: "hsc", label: "এইচএসসি / সমমান" },
+  { value: "diploma", label: "ডিপ্লোমা / সমমান" },
+  { value: "graduate", label: "স্নাতক / সমমান" },
+  { value: "masters", label: "স্নাতকোত্তর / সমমান" },
+] as const;
 
 export const SITE = {
   name: "BAYA Blog",
   url: "https://baya.blog",
   description:
-    "বাংলাদেশ সরকারি চাকরি, শিক্ষা, ফলাফল ও নাগরিক সেবা সংক্রান্ত নির্ভরযোগ্য তথ্যের প্ল্যাটফর্ম।",
+    "বাংলাদেশের সরকারি, বেসরকারি, ব্যাংক ও এনজিও চাকরির সবচেয়ে হালনাগাদ নিয়োগ বিজ্ঞপ্তি — যাচাইকৃত তথ্য, সহজ ভাষায়।",
 };
 
-/** Default Open Graph / Twitter card image, used whenever a page has no image of its own. */
-export const DEFAULT_OG_IMAGE = {
-  url: "/brand/og-image.jpg",
-  width: 1200,
-  height: 630,
-  alt: SITE.name,
-};
+/** Default Open Graph / Twitter card image. Currently unset — logo/cover branding is on hold for now. */
+export const DEFAULT_OG_IMAGE: { url: string; width: number; height: number; alt: string } | null = null;
 
-export function getHub(slug: string): HubConfig | undefined {
-  return HUBS.find((h) => h.slug === slug);
+export function getCategory(slug: string): CategoryConfig | undefined {
+  return CATEGORIES.find((c) => c.slug === slug);
 }

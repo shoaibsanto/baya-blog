@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     locale: "bn_BD",
     type: "website",
-    images: [DEFAULT_OG_IMAGE],
+    images: DEFAULT_OG_IMAGE ? [DEFAULT_OG_IMAGE] : undefined,
   },
   twitter: {
-    card: "summary_large_image",
-    images: [DEFAULT_OG_IMAGE.url],
+    card: DEFAULT_OG_IMAGE ? "summary_large_image" : "summary",
+    images: DEFAULT_OG_IMAGE ? [DEFAULT_OG_IMAGE.url] : undefined,
   },
 };
 

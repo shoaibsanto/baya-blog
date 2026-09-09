@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { HUBS } from "@/config/site.config";
+import { CATEGORIES } from "@/config/site.config";
 
 export default function NotFound() {
   return (
@@ -31,15 +31,15 @@ export default function NotFound() {
       </form>
 
       <div className="mt-8">
-        <p className="text-sm font-semibold text-foreground">জনপ্রিয় বিভাগ</p>
+        <p className="text-sm font-semibold text-foreground">জনপ্রিয় ক্যাটাগরি</p>
         <div className="mt-3 flex flex-wrap justify-center gap-2">
-          {HUBS.map((hub) => (
+          {CATEGORIES.map((cat) => (
             <Link
-              key={hub.slug}
-              href={`/${hub.slug}`}
+              key={cat.slug}
+              href={`/category/${cat.slug}`}
               className="rounded-full border border-border px-3 py-1.5 text-sm text-foreground hover:border-brand"
             >
-              {hub.name}
+              {cat.name}
             </Link>
           ))}
         </div>

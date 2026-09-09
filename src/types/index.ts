@@ -1,16 +1,11 @@
-import type { HubSlug } from "@/config/site.config";
+import type { CategorySlug } from "@/config/site.config";
 
 export type ContentType =
-  | "news"
   | "job-circular"
-  | "result"
-  | "routine"
+  | "job-result"
   | "admit-card"
   | "guide"
-  | "how-to"
-  | "service"
-  | "notice"
-  | "explainer";
+  | "notice";
 
 export interface Author {
   id: string;
@@ -46,18 +41,65 @@ export type ContentBlock =
     }
   | { type: "callout"; variant: "info" | "warning" | "success"; title?: string; text: string }
   | { type: "steps"; steps: { title: string; text: string }[] }
+  | { type: "checklist"; items: string[] }
   | { type: "official-source"; source: OfficialSource };
 
 export interface RelatedArticleRef {
   slug: string;
-  hub: HubSlug;
   title: string;
+}
+
+/** One advertised position within a circular. */
+export interface JobPosition {
+  name: string;
+  vacancy: string;
+  salary?: string;
+  qualification?: string;
+  otherRequirements?: string;
+}
+
+export interface OrganizationInfo {
+  name: string;
+  website?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+}
+
+/** Structured fields specific to a job-circular / job-result post, used for the summary box, summary table, and JobPosting schema. */
+export interface JobCircularMeta {
+  organization: OrganizationInfo;
+  jobLocation: string;
+  positionCategoryCount: string;
+  totalVacancy: string;
+  jobType: string;
+  educationRequirement: string;
+  /** Normalized qualification tags for filtering — see QUALIFICATIONS in site.config. Distinct from the free-text educationRequirement shown to readers. */
+  qualificationLevels?: string[];
+  ageLimit?: string;
+  applicationFee?: string;
+  applicationMethod: string;
+  source?: string;
+  noticeDate?: string;
+  publishDate: string;
+  deadline: string;
+  positions?: JobPosition[];
+  requiredDocuments?: string[];
+  employmentType?:
+    | "FULL_TIME"
+    | "PART_TIME"
+    | "CONTRACTOR"
+    | "TEMPORARY"
+    | "INTERN"
+    | "OTHER";
 }
 
 export interface Article {
   id: string;
   slug: string;
-  hub: HubSlug;
+  category: CategorySlug;
+  /** Secondary categories this post also appears under (mirrors multi-category tagging on job boards). */
+  additionalCategories?: CategorySlug[];
   title: string;
   excerpt: string;
   contentType: ContentType;
@@ -67,10 +109,12 @@ export interface Article {
   lastVerifiedAt?: string;
   officialSource?: OfficialSource;
   featuredImage?: { src: string; alt: string };
+  circularImage?: { src: string; alt: string };
   body: ContentBlock[];
   faq?: FAQItem[];
   downloads?: DownloadItem[];
   relatedArticles?: RelatedArticleRef[];
   primaryTopic?: string;
   tags?: string[];
+  job?: JobCircularMeta;
 }

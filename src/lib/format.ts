@@ -26,3 +26,16 @@ export function formatBnDate(iso: string): string {
   const year = toBnNumber(d.getFullYear());
   return `${day} ${month}, ${year}`;
 }
+
+/** Days remaining until an ISO deadline, as a short Bengali label. Returns null once the deadline has passed. */
+export function daysRemaining(iso: string): string | null {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadline = new Date(iso);
+  deadline.setHours(0, 0, 0, 0);
+  const diffMs = deadline.getTime() - today.getTime();
+  const days = Math.round(diffMs / 86_400_000);
+  if (days < 0) return null;
+  if (days === 0) return "আজই শেষ দিন";
+  return `${toBnNumber(days)} দিন বাকি`;
+}

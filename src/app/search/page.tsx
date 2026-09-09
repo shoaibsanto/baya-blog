@@ -1,12 +1,11 @@
-import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { JobCard } from "@/components/home/JobCard";
 import { SAMPLE_ARTICLES } from "@/content/sample-articles";
-import { getHub } from "@/config/site.config";
 import { generatePageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = generatePageMetadata({
   title: "অনুসন্ধান",
-  description: "BAYA Blog-এ আর্টিকেল খুঁজুন।",
+  description: "BAYA Blog-এ চাকরির বিজ্ঞপ্তি খুঁজুন।",
   path: "/search",
   noindex: true,
 });
@@ -24,6 +23,7 @@ export default async function SearchPage({
         (a) =>
           a.title.toLowerCase().includes(query) ||
           a.excerpt.toLowerCase().includes(query) ||
+          a.job?.organization.name.toLowerCase().includes(query) ||
           a.tags?.some((t) => t.toLowerCase().includes(query))
       )
     : [];
@@ -40,7 +40,7 @@ export default async function SearchPage({
           name="q"
           type="search"
           defaultValue={q}
-          placeholder="কী খুঁজছেন?"
+          placeholder="প্রতিষ্ঠান বা পদের নাম লিখুন..."
           className="h-11 flex-1 rounded-md border border-border bg-background px-4 text-sm outline-none focus:border-brand"
         />
         <button
@@ -57,21 +57,11 @@ export default async function SearchPage({
         )}
         {results.length > 0 && (
           <ul className="grid gap-4 sm:grid-cols-2">
-            {results.map((article) => {
-              const hub = getHub(article.hub);
-              return (
-                <li key={article.id}>
-                  <Link
-                    href={`/${article.hub}/${article.slug}`}
-                    className="block rounded-md border border-border p-4 hover:border-brand"
-                  >
-                    <span className="text-xs text-muted">{hub?.shortName}</span>
-                    <p className="mt-1 font-semibold text-foreground">{article.title}</p>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted">{article.excerpt}</p>
-                  </Link>
-                </li>
-              );
-            })}
+            {results.map((article) => (
+              <li key={article.id}>
+                <JobCard article={article} />
+              </li>
+            ))}
           </ul>
         )}
       </div>

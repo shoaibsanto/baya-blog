@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HUBS, SITE } from "@/config/site.config";
+import { CATEGORIES, SITE } from "@/config/site.config";
 
 export function Footer() {
   return (
@@ -11,12 +11,12 @@ export function Footer() {
             <p className="mt-2 text-sm leading-6 text-muted">{SITE.description}</p>
           </div>
           <div>
-            <p className="text-sm font-semibold text-foreground">বিভাগসমূহ</p>
+            <p className="text-sm font-semibold text-foreground">চাকরির ক্যাটাগরি</p>
             <ul className="mt-2 space-y-1.5">
-              {HUBS.map((hub) => (
-                <li key={hub.slug}>
-                  <Link href={`/${hub.slug}`} className="text-sm text-muted hover:text-brand-dark">
-                    {hub.name}
+              {CATEGORIES.map((cat) => (
+                <li key={cat.slug}>
+                  <Link href={`/category/${cat.slug}`} className="text-sm text-muted hover:text-brand-dark">
+                    {cat.name}
                   </Link>
                 </li>
               ))}
