@@ -55,7 +55,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="/feed.xml" className="text-sm text-muted hover:text-brand-dark" rel="alternate" type="application/rss+xml">
+                <a href="/feed" className="text-sm text-muted hover:text-brand-dark" rel="alternate" type="application/rss+xml">
                   RSS ফিড
                 </a>
               </li>

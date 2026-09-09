@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   alternates: {
     types: {
-      "application/rss+xml": [{ url: "/feed.xml", title: "BAYA Blog RSS Feed" }],
+      "application/rss+xml": [{ url: "/feed", title: "BAYA Blog RSS Feed" }],
     },
   },
 };
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="bn" className={`${bangla.variable} h-full antialiased`}>
       <head>
-        <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href="/feed.xml" />
+        <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href="/feed" />
       </head>
       <body className="min-h-full flex flex-col">
         <Header />

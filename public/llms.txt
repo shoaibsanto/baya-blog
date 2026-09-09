@@ -1,0 +1,22 @@
+# BAYA Blog
+> বাংলাদেশের সরকারি, বেসরকারি, ব্যাংক ও এনজিও চাকরির সবচেয়ে হালনাগাদ নিয়োগ বিজ্ঞপ্তি — যাচাইকৃত তথ্য, সহজ ভাষায়।
+
+URL: https://baya.blog
+Language: Bengali (bn-BD)
+Type: Job information platform — Bangladeshi government, bank, private, and NGO job circulars
+
+## Sections
+
+- Homepage: All latest job circulars with filters
+- Government Jobs: /category/government-jobs/
+- Bank Jobs: /category/bank-jobs/
+- Private Jobs: /category/private-jobs/
+- NGO Jobs: /category/ngo-jobs/
+- About: /about/
+- Contact: /contact/
+
+## About
+
+BAYA Blog provides verified, original content about job circulars in Bangladesh.
+All information is sourced from official websites and verified against primary sources.
+No scraping — all content is independently created.
