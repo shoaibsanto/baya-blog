@@ -48,7 +48,7 @@
   --color-danger: var(--danger);
   --color-danger-bg: var(--danger-bg);
 
-  --font-sans: var(--font-bangla), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "SolaimanLipi", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
