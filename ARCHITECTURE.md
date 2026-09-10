@@ -116,6 +116,35 @@ audit trail of what was auto-published vs. hand-written.
 
 ---
 
+## Parallel-session merge (2026-09-10)
+
+A separate session worked on this same repo concurrently with the automation-pipeline work above and pushed
+directly to `main` before this session's push landed. That work was pulled in and reconciled rather than
+overwritten — merge conflicts were in `src/content/sample-articles.ts` (their 9 expanded articles, since
+converted into `content-data/jobs/*.json` — see "Content storage" above), `src/app/[slug]/page.tsx`, and
+`src/app/sitemap.ts`. What that session added, now merged in:
+
+- **Organization pages** (`/organization/`, `/organization/[slug]/`) and **qualification pages**
+  (`/qualification/`, `/qualification/[slug]/`, only generated when ≥2 articles share a qualification level)
+  — both backed by `src/lib/content/articles.ts`, a richer query layer (related-content scoring, link-graph /
+  orphan detection, deadline-status classification) that sits on top of the `content-data/jobs/*.json` loader
+  in `src/content/articles.ts`. Two content modules now exist on purpose: `@/content/articles` is the raw
+  per-file loader (what the discovery pipeline writes to), `@/lib/content/articles` is the higher-level
+  query layer built on it — don't collapse them into one without checking every consumer.
+- **RSS feed** at `/feed` and an **llms.txt** (`public/llms.txt` static + `/llms` dynamic route) — the
+  AI-crawler-accessibility item this doc had flagged as still-open.
+- Font switched from Hind Siliguri to **SolaimanLipi** (loaded via `fonts.maateen.me`).
+- All 5 original sample articles expanded to 800–1,200 words each; 4 new articles added covering the
+  `job-result`, `admit-card`, and `guide`/`notice` content types (which the type system already supported).
+- `about`/`contact` pages, a `DeadlineBadge` component, and stable Bengali→English org-slug mapping
+  (`ORG_SLUG_MAP` in `src/lib/content/articles.ts` — extend this map by hand for any organization name that
+  doesn't romanize cleanly; don't rely purely on the slugify fallback for Bengali names).
+- Two small display bugs fixed during the merge: article/organization counts rendered in Latin digits instead
+  of Bengali (`toBnNumber()` was missing in a few spots), and one page showed a raw category slug instead of
+  its Bengali name.
+
+---
+
 ## Phase 1 (historical — superseded, kept for reference only)
 
 **Approved decisions (Phase 1, no longer in effect):**

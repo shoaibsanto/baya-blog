@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CATEGORIES } from "@/config/site.config";
 
+/**
+ * RULE 73: Navigation — logical, crawlable, semantic, stable.
+ * No JavaScript-only navigation.
+ */
+
 const PRIMARY_NAV = CATEGORIES.slice(0, 4);
 
 export function Header() {
@@ -39,6 +44,12 @@ export function Header() {
               {cat.shortName}
             </Link>
           ))}
+          <Link href="/about" className="text-sm font-medium text-foreground hover:text-brand-dark">
+            আমাদের সম্পর্কে
+          </Link>
+          <Link href="/contact" className="text-sm font-medium text-foreground hover:text-brand-dark">
+            যোগাযোগ
+          </Link>
         </nav>
 
         <form action="/search" onSubmit={handleSearch} className="hidden max-w-xs flex-1 items-center md:flex">
@@ -93,6 +104,16 @@ export function Header() {
                 </Link>
               </li>
             ))}
+            <li className="border-t border-border mt-2 pt-2">
+              <Link href="/about" onClick={() => setOpen(false)} className="block py-2 text-sm font-medium text-foreground">
+                আমাদের সম্পর্কে
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" onClick={() => setOpen(false)} className="block py-2 text-sm font-medium text-foreground">
+                যোগাযোগ
+              </Link>
+            </li>
           </ul>
         </nav>
       )}

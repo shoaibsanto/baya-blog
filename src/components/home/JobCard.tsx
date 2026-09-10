@@ -1,13 +1,21 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { DeadlineBadge } from "@/components/ui/DeadlineBadge";
 import { getCategory } from "@/config/site.config";
 import { formatBnDate, daysRemaining, toBnNumber } from "@/lib/format";
+import { slugify } from "@/lib/content/articles";
 import type { Article } from "@/types";
 
+/**
+ * Job card component for homepage and category listings.
+ * RULE 18: Organization connectivity — links to org page.
+ * RULE 39: Deadline intelligence — visual status badges.
+ */
 export function JobCard({ article }: { article: Article }) {
   const category = getCategory(article.category);
   const job = article.job;
   const remaining = job ? daysRemaining(job.deadline) : null;
+  const orgSlug = job ? slugify(job.organization.name) : null;
 
   return (
     <article className="flex h-full flex-col rounded-md border border-border p-4 transition hover:border-brand">
@@ -16,6 +24,7 @@ export function JobCard({ article }: { article: Article }) {
         {article.additionalCategories?.includes("hot-jobs") && (
           <Badge tone="muted">🔥 হট জব</Badge>
         )}
+        {job?.deadline && <DeadlineBadge deadline={job.deadline} />}
         <time dateTime={article.updatedAt} className="ml-auto text-xs text-muted">
           {formatBnDate(article.updatedAt)}
         </time>
@@ -46,6 +55,16 @@ export function JobCard({ article }: { article: Article }) {
 
       {remaining && (
         <p className="mt-2 text-xs font-medium text-accent">{remaining}</p>
+      )}
+
+      {/* RULE 18: Organization connectivity — link to org page */}
+      {orgSlug && job?.organization.name && (
+        <Link
+          href={`/organization/${orgSlug}`}
+          className="mt-2 text-xs text-muted hover:text-brand-dark"
+        >
+          {job.organization.name}
+        </Link>
       )}
 
       <Link
