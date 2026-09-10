@@ -1,0 +1,132 @@
+{
+  "id": "sonali-bank-officer-circular",
+  "slug": "sonali-bank-officer-circular",
+  "category": "bank-jobs",
+  "additionalCategories": [
+    "government-jobs"
+  ],
+  "title": "সোনালী ব্যাংক পিএলসি অফিসার (জেনারেল) নিয়োগ বিজ্ঞপ্তি ২০২৬",
+  "excerpt": "সোনালী ব্যাংক পিএলসি-তে অফিসার (জেনারেল) পদে নিয়োগ বিজ্ঞপ্তি প্রকাশিত হয়েছে। যোগ্যতা, বেতন ও আবেদনের নিয়ম জেনে নিন।",
+  "contentType": "job-circular",
+  "author": {
+    "id": "editorial",
+    "name": "BAYA Blog সম্পাদকীয় দল"
+  },
+  "publishedAt": "2026-09-06",
+  "updatedAt": "2026-09-08",
+  "lastVerifiedAt": "2026-09-08",
+  "officialSource": {
+    "name": "সোনালী ব্যাংক পিএলসি",
+    "url": "https://www.sonalibank.com.bd/"
+  },
+  "primaryTopic": "sonali-bank",
+  "tags": [
+    "Sonali Bank",
+    "ব্যাংক নিয়োগ"
+  ],
+  "job": {
+    "organization": {
+      "name": "সোনালী ব্যাংক পিএলসি",
+      "website": "sonalibank.com.bd",
+      "address": "প্রধান কার্যালয়, ৩৫-৪২ মতিঝিল বা/এ, ঢাকা-১০০০",
+      "phone": "+৮৮-০২-৯৫৫০০৮১",
+      "email": "itd@sonalibank.com.bd"
+    },
+    "jobLocation": "সারাদেশ",
+    "positionCategoryCount": "1",
+    "totalVacancy": "১২০",
+    "jobType": "সরকারি ব্যাংক",
+    "educationRequirement": "যেকোনো বিষয়ে স্নাতক/স্নাতকোত্তর",
+    "qualificationLevels": [
+      "graduate",
+      "masters"
+    ],
+    "ageLimit": "৩০ সেপ্টেম্বর ২০২৬ তারিখে সর্বোচ্চ ৩২ বছর",
+    "applicationFee": "২৫০/- টাকা (অনলাইন পেমেন্ট)",
+    "applicationMethod": "অনলাইনে (ব্যাংকের নিজস্ব পোর্টাল)",
+    "source": "দৈনিক প্রথম আলো ও অফিসিয়াল ওয়েবসাইট",
+    "noticeDate": "2026-09-05",
+    "publishDate": "2026-09-06",
+    "deadline": "2026-09-30",
+    "employmentType": "FULL_TIME",
+    "positions": [
+      {
+        "name": "অফিসার (জেনারেল)",
+        "vacancy": "১২০",
+        "salary": "২২,০০০ – ৫৩,০৬০ টাকা",
+        "qualification": "যেকোনো বিষয়ে স্নাতক, ন্যূনতম ২য় শ্রেণি/বিভাগ বা সমমান সিজিপিএ"
+      }
+    ]
+  },
+  "body": [
+    {
+      "type": "callout",
+      "variant": "info",
+      "title": "সংক্ষিপ্ত বিবরণ",
+      "text": "সোনালী ব্যাংক পিএলসি-তে অফিসার (জেনারেল) পদে সারাদেশে ১২০ জনকে নিয়োগ দেওয়া হবে।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "পদের বিবরণ ও বেতনস্কেল",
+      "id": "position"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "আবেদনের যোগ্যতা",
+      "id": "eligibility"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "স্বীকৃত বিশ্ববিদ্যালয় থেকে স্নাতক বা সমমান ডিগ্রি",
+        "কম্পিউটার ব্যবহারে দক্ষতা",
+        "বয়স ৩০ সেপ্টেম্বর ২০২৬ তারিখে সর্বোচ্চ ৩২ বছর"
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "আবেদন করার নিয়ম",
+      "id": "how-to-apply"
+    },
+    {
+      "type": "steps",
+      "steps": [
+        {
+          "title": "অনলাইন আবেদন",
+          "text": "ব্যাংকের ক্যারিয়ার পোর্টালে গিয়ে আবেদন ফরম পূরণ করুন।"
+        },
+        {
+          "title": "ফি পরিশোধ",
+          "text": "নির্ধারিত ২৫০ টাকা অনলাইনে পরিশোধ করুন।"
+        },
+        {
+          "title": "কনফার্মেশন সংরক্ষণ",
+          "text": "আবেদনের কনফার্মেশন কপি প্রিন্ট করে সংরক্ষণ করুন।"
+        }
+      ]
+    },
+    {
+      "type": "official-source",
+      "source": {
+        "name": "সোনালী ব্যাংক পিএলসি",
+        "url": "https://www.sonalibank.com.bd/"
+      }
+    }
+  ],
+  "faq": [
+    {
+      "question": "সোনালী ব্যাংকের এই নিয়োগে কতজন নেওয়া হবে?",
+      "answer": "অফিসার (জেনারেল) পদে সারাদেশে মোট ১২০ জনকে নিয়োগ দেওয়া হবে।"
+    }
+  ],
+  "relatedArticles": [
+    {
+      "slug": "bangladesh-krishi-bank-job-circular",
+      "title": "বাংলাদেশ কৃষি ব্যাংক নিয়োগ বিজ্ঞপ্তি ২০২৬"
+    }
+  ]
+}

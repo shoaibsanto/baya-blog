@@ -1,0 +1,103 @@
+{
+  "id": "square-group-job-circular",
+  "slug": "square-group-job-circular",
+  "category": "private-jobs",
+  "additionalCategories": [
+    "group-of-company-jobs"
+  ],
+  "title": "স্কয়ার গ্রুপে বিভিন্ন পদে নিয়োগ বিজ্ঞপ্তি ২০২৬",
+  "excerpt": "দেশের শীর্ষস্থানীয় শিল্পগোষ্ঠী স্কয়ার গ্রুপে অফিসার ও এক্সিকিউটিভ পদে নিয়োগ বিজ্ঞপ্তি প্রকাশিত হয়েছে।",
+  "contentType": "job-circular",
+  "author": {
+    "id": "editorial",
+    "name": "BAYA Blog সম্পাদকীয় দল"
+  },
+  "publishedAt": "2026-09-04",
+  "updatedAt": "2026-09-07",
+  "lastVerifiedAt": "2026-09-07",
+  "officialSource": {
+    "name": "Square Group",
+    "url": "https://www.squaregroup.com/"
+  },
+  "primaryTopic": "square-group",
+  "tags": [
+    "Square Group",
+    "প্রাইভেট চাকরি"
+  ],
+  "job": {
+    "organization": {
+      "name": "স্কয়ার গ্রুপ",
+      "website": "squaregroup.com",
+      "address": "স্কয়ার সেন্টার, ৪৮ মহাখালী বা/এ, ঢাকা-১২১২",
+      "email": "career@squaregroup.com"
+    },
+    "jobLocation": "ঢাকা",
+    "positionCategoryCount": "৩",
+    "totalVacancy": "অনির্দিষ্ট",
+    "jobType": "বেসরকারি চাকরি",
+    "educationRequirement": "বিবিএ/এমবিএ বা সংশ্লিষ্ট বিষয়ে স্নাতক",
+    "qualificationLevels": [
+      "graduate",
+      "masters"
+    ],
+    "applicationMethod": "ই-মেইলে সিভি প্রেরণ",
+    "source": "প্রতিষ্ঠানের অফিসিয়াল ক্যারিয়ার পেজ",
+    "publishDate": "2026-09-04",
+    "deadline": "2026-09-20",
+    "employmentType": "FULL_TIME",
+    "positions": [
+      {
+        "name": "এক্সিকিউটিভ, মার্কেটিং",
+        "vacancy": "০৩",
+        "qualification": "বিবিএ/এমবিএ (মার্কেটিং)"
+      },
+      {
+        "name": "সিনিয়র এক্সিকিউটিভ, ফাইন্যান্স",
+        "vacancy": "০২",
+        "qualification": "বিবিএ/এমবিএ (ফাইন্যান্স)"
+      },
+      {
+        "name": "অফিসার, এইচআর",
+        "vacancy": "০২",
+        "qualification": "স্নাতক/স্নাতকোত্তর (যেকোনো বিষয়ে)"
+      }
+    ]
+  },
+  "body": [
+    {
+      "type": "callout",
+      "variant": "info",
+      "title": "সংক্ষিপ্ত বিবরণ",
+      "text": "মার্কেটিং, ফাইন্যান্স ও এইচআর বিভাগে অভিজ্ঞ ও নতুন প্রার্থী উভয়ের জন্য আবেদনের সুযোগ রয়েছে।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "পদসমূহ",
+      "id": "positions"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "আবেদন করার নিয়ম",
+      "id": "how-to-apply"
+    },
+    {
+      "type": "paragraph",
+      "text": "আগ্রহী প্রার্থীদের নিজ নিজ পদের নাম উল্লেখ করে সিভি career@squaregroup.com ঠিকানায় ইমেইল করতে হবে।"
+    },
+    {
+      "type": "official-source",
+      "source": {
+        "name": "Square Group",
+        "url": "https://www.squaregroup.com/"
+      }
+    }
+  ],
+  "relatedArticles": [
+    {
+      "slug": "brac-ngo-job-circular",
+      "title": "ব্র্যাক-এ নিয়োগ বিজ্ঞপ্তি ২০২৬"
+    }
+  ]
+}

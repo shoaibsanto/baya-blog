@@ -50,12 +50,69 @@ than the source site (which the user explicitly asked to exceed, not just match)
   actual postings. Real content ingestion is still a future step.
 
 **Still open / not yet done:**
-- Custom domain `baya.blog` isn't connected to the Vercel project yet (no DNS access from this environment) —
-  live URL is currently the Vercel-assigned domain.
 - An Age Calculator utility (bdgovtjob.net has one) was scoped out of this pass — flagged as a nice-to-have,
   not core to the pivot.
 - AI-crawler-specific accessibility (llms.txt / clean-markdown endpoints, per the `ai-markdown-rendering`
   skill) has not been added yet — worth doing given the user's "AI বট" friendliness ask.
+
+*(Custom domain `baya.blog` is now connected to the Vercel project and live — resolved 2026-09-09.)*
+
+---
+
+## Automation Pipeline — Discovery + Original Generation (added 2026-09-10)
+
+**Decision:** rather than manually publishing every job circular, a scheduled pipeline discovers new
+postings on bdgovtjob.net and republishes an original, more complete BAYA Blog version automatically.
+
+**Why bdgovtjob.net content is never copied, only used as a discovery signal:** bdgovtjob.net's own
+prose/write-up is their copyrighted editorial content. Automatically scraping and "expanding" their
+sentences at scale would be derivative use with real legal exposure, and it wouldn't actually make content
+better — it would just be their content, padded. Instead, the pipeline treats bdgovtjob.net purely as *"a
+new circular exists"* signal, and pulls only **structured facts** (organization name, vacancy counts,
+dates, salary, position tables) out of their page — facts are not copyright-protected, only the specific
+expression of them is. All prose (org description, eligibility explanation, prep tips, FAQ) is generated
+fresh, grounded strictly in those facts, with an explicit instruction to the model to never invent a
+number/date/name that wasn't supplied.
+
+**How it works (`scripts/discover-and-generate.mjs`, run every 10 minutes by
+`.github/workflows/discover-jobs.yml`):**
+1. **Discover** — bdgovtjob.net runs WordPress with a fully open REST API (`/wp-json/wp/v2/posts`,
+   `/wp-json/wp/v2/categories`) — far more reliable than HTML scraping. The script lists the latest posts
+   and diffs against `content-data/.discovery-state.json` (a list of already-seen post IDs) to find new ones.
+2. **Category-gate** — `scripts/lib/categoryMap.mjs` maps their category slugs to ours
+   (`government-jobs-circular` → `government-jobs`, etc.). Posts with no mapped job category (assignments,
+   admit-card notices, exam-date posts, multi-circular roundup posts) are skipped entirely — this pipeline
+   only ever touches single-organization job-circular posts.
+3. **Extract facts** — `scripts/lib/extractFacts.mjs` (cheerio) parses their `<table class="jc-table">`
+   key/value markup (a WordPress custom template used consistently across their job-circular posts) to pull
+   organization info, the summary table, and the per-position table as plain data. **Important gotcha found
+   and fixed:** their HTML mixes NFC/NFD Unicode normalization for some Bengali conjuncts (e.g. "অফিশিয়াল"),
+   which silently breaks exact-string label matching unless both the HTML and the label maps are
+   `.normalize("NFC")`-ed first — done at the top of `extractFacts()`.
+4. **Mandatory-fact gate** — if organization name, vacancy count, deadline, or publish date can't be
+   extracted, the post is skipped rather than published with guessed data (verified against the live site:
+   ~8 of the latest 20 posts have the full `jc-table` format at any given time; the rest are roundup/notice
+   posts that correctly get skipped).
+5. **Generate** — `scripts/lib/generateArticle.mjs` calls Claude (`claude-sonnet-5` via the plain Messages
+   API, no SDK dependency) with the extracted facts and a strict system prompt: never invent facts not
+   given, never reuse bdgovtjob.net's sentences, and add sections they don't have (a "who this job suits"
+   analysis, prep tips, an expanded 4–6 question FAQ) — this is what makes the result "1.5–2x" richer, not
+   padding.
+6. **Write** — the generated prose merges with the deterministically-extracted `job` metadata into one
+   `Article` JSON file under `content-data/jobs/<slug>.json`. The GitHub Action commits and pushes only if
+   new files were created, which triggers Vercel's existing git-based auto-deploy — no Vercel Cron needed at
+   any point (Vercel Cron on the Hobby/free plan is capped at once/day; GitHub Actions on a public repo is
+   free with no such cap, which is why the scheduler lives there instead).
+
+**Setup required (not done by this session — needs the user's own key):** add an `ANTHROPIC_API_KEY`
+repository secret in GitHub (Settings → Secrets and variables → Actions → New repository secret) for the
+generation step to run for real. Without it, only `npm run discover:dry-run` (a non-LLM template stand-in,
+used to validate the discovery/extraction plumbing) works; the real workflow will fail loudly on that step
+until the secret is added — it will not silently fall back to inventing content.
+
+**Content provenance:** every auto-generated article carries an `automation: { discoveredFrom, discoveredAt,
+reviewed: false }` field (not rendered to readers) — a hook for an editorial-review workflow later, and an
+audit trail of what was auto-published vs. hand-written.
 
 ---
 

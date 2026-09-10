@@ -18,6 +18,7 @@ export function JobSummaryTable({ article }: { article: Article }) {
   if (job.ageLimit) rows.push(["বয়সসীমা", job.ageLimit]);
   if (job.applicationFee) rows.push(["আবেদনের ফি", job.applicationFee]);
   if (job.source) rows.push(["বিজ্ঞপ্তির সোর্স", job.source]);
+  if (job.memoNumber) rows.push(["স্মারক নম্বর", job.memoNumber]);
   if (job.noticeDate) rows.push(["বিজ্ঞপ্তি জারির তারিখ", formatBnDate(job.noticeDate)]);
   rows.push(["বিজ্ঞপ্তি প্রকাশের তারিখ", formatBnDate(job.publishDate)]);
   rows.push(["আবেদনের শেষ তারিখ", formatBnDate(job.deadline)]);

@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { JobCard } from "@/components/home/JobCard";
-import { SAMPLE_ARTICLES } from "@/content/sample-articles";
+import { ALL_ARTICLES } from "@/content/articles";
 import { generatePageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = generatePageMetadata({
@@ -19,7 +19,7 @@ export default async function SearchPage({
   const query = q.trim().toLowerCase();
 
   const results = query
-    ? SAMPLE_ARTICLES.filter(
+    ? ALL_ARTICLES.filter(
         (a) =>
           a.title.toLowerCase().includes(query) ||
           a.excerpt.toLowerCase().includes(query) ||

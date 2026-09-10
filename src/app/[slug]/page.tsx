@@ -14,7 +14,7 @@ import { OrganizationInfoBox } from "@/components/article/OrganizationInfoBox";
 import { PositionsTable } from "@/components/article/PositionsTable";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCategory } from "@/config/site.config";
-import { getArticleBySlug, listRelated, SAMPLE_ARTICLES } from "@/content/sample-articles";
+import { getArticleBySlug, listRelated, ALL_ARTICLES } from "@/content/articles";
 import { renderBlocks, extractHeadings } from "@/lib/render/renderBlocks";
 import { generateArticleMetadata, generateCanonical } from "@/lib/seo/metadata";
 import {
@@ -27,7 +27,7 @@ import {
 export const revalidate = 3600;
 
 export function generateStaticParams() {
-  return SAMPLE_ARTICLES.map((a) => ({ slug: a.slug }));
+  return ALL_ARTICLES.map((a) => ({ slug: a.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -149,7 +149,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 }
 
 /** Renders the free-form body blocks, inserting the positions table right after the "positions" heading when job data exists. */
-function renderBlocksWithJobData(article: (typeof SAMPLE_ARTICLES)[number]) {
+function renderBlocksWithJobData(article: (typeof ALL_ARTICLES)[number]) {
   const blocks = renderBlocks(article.body);
   if (!article.job?.positions?.length) return blocks;
 

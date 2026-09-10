@@ -4,7 +4,7 @@ import { Breadcrumb } from "@/components/layout/Breadcrumb";
 import { JobCard } from "@/components/home/JobCard";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { CATEGORIES, getCategory } from "@/config/site.config";
-import { listArticlesByCategory } from "@/content/sample-articles";
+import { listArticlesByCategory } from "@/content/articles";
 import { generatePageMetadata } from "@/lib/seo/metadata";
 import { generateBreadcrumbSchema } from "@/lib/seo/schema";
 

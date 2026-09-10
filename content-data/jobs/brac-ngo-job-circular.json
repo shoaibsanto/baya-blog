@@ -1,0 +1,102 @@
+{
+  "id": "brac-ngo-job-circular",
+  "slug": "brac-ngo-job-circular",
+  "category": "ngo-jobs",
+  "additionalCategories": [
+    "private-jobs"
+  ],
+  "title": "ব্র্যাক-এ প্রোগ্রাম অর্গানাইজার পদে নিয়োগ বিজ্ঞপ্তি ২০২৬",
+  "excerpt": "দেশের বৃহত্তম বেসরকারি উন্নয়ন সংস্থা ব্র্যাক-এ প্রোগ্রাম অর্গানাইজার পদে নিয়োগ বিজ্ঞপ্তি প্রকাশিত হয়েছে।",
+  "contentType": "job-circular",
+  "author": {
+    "id": "editorial",
+    "name": "BAYA Blog সম্পাদকীয় দল"
+  },
+  "publishedAt": "2026-09-03",
+  "updatedAt": "2026-09-07",
+  "lastVerifiedAt": "2026-09-07",
+  "officialSource": {
+    "name": "BRAC",
+    "url": "https://www.brac.net/"
+  },
+  "primaryTopic": "brac",
+  "tags": [
+    "BRAC",
+    "এনজিও চাকরি"
+  ],
+  "job": {
+    "organization": {
+      "name": "ব্র্যাক",
+      "website": "brac.net",
+      "address": "ব্র্যাক সেন্টার, ৭৫ মহাখালী, ঢাকা-১২১২",
+      "email": "recruitment@brac.net"
+    },
+    "jobLocation": "রংপুর ও ময়মনসিংহ বিভাগ",
+    "positionCategoryCount": "1",
+    "totalVacancy": "৪০",
+    "jobType": "এনজিও চাকরি",
+    "educationRequirement": "যেকোনো বিষয়ে স্নাতক",
+    "qualificationLevels": [
+      "graduate"
+    ],
+    "ageLimit": "সর্বোচ্চ ৩৫ বছর",
+    "applicationMethod": "অনলাইন আবেদন ফরম",
+    "source": "প্রতিষ্ঠানের অফিসিয়াল ক্যারিয়ার পেজ",
+    "publishDate": "2026-09-03",
+    "deadline": "2026-09-18",
+    "employmentType": "CONTRACTOR",
+    "positions": [
+      {
+        "name": "প্রোগ্রাম অর্গানাইজার",
+        "vacancy": "৪০",
+        "qualification": "যেকোনো বিষয়ে স্নাতক, মাঠপর্যায়ে কাজের আগ্রহ"
+      }
+    ]
+  },
+  "body": [
+    {
+      "type": "callout",
+      "variant": "info",
+      "title": "সংক্ষিপ্ত বিবরণ",
+      "text": "রংপুর ও ময়মনসিংহ বিভাগের বিভিন্ন জেলায় মাঠপর্যায়ে কাজ করার জন্য প্রোগ্রাম অর্গানাইজার নিয়োগ দেওয়া হবে।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "দায়িত্ব ও যোগ্যতা",
+      "id": "responsibilities"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "কমিউনিটি পর্যায়ে উপকারভোগীদের সাথে নিয়মিত যোগাযোগ",
+        "মোটরসাইকেল চালাতে সক্ষম হতে হবে",
+        "সংশ্লিষ্ট এলাকায় ভ্রমণে ইচ্ছুক থাকতে হবে"
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "আবেদন করার নিয়ম",
+      "id": "how-to-apply"
+    },
+    {
+      "type": "paragraph",
+      "text": "প্রতিষ্ঠানের অফিসিয়াল ক্যারিয়ার পেজে থাকা অনলাইন ফরমের মাধ্যমে আবেদন করতে হবে।"
+    },
+    {
+      "type": "official-source",
+      "source": {
+        "name": "BRAC",
+        "url": "https://www.brac.net/"
+      }
+    }
+  ],
+  "relatedArticles": [
+    {
+      "slug": "square-group-job-circular",
+      "title": "স্কয়ার গ্রুপে নিয়োগ বিজ্ঞপ্তি ২০২৬"
+    }
+  ]
+}

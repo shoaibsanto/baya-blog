@@ -4,7 +4,7 @@ import { JobCard } from "@/components/home/JobCard";
 import { FilterBar } from "@/components/home/FilterBar";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { CATEGORIES } from "@/config/site.config";
-import { listLatestArticles } from "@/content/sample-articles";
+import { listLatestArticles } from "@/content/articles";
 import { filterArticles } from "@/lib/jobFilters";
 import { generatePageMetadata } from "@/lib/seo/metadata";
 import { generateOrganizationSchema, generateWebSiteSchema } from "@/lib/seo/schema";

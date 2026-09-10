@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE, CATEGORIES } from "@/config/site.config";
-import { SAMPLE_ARTICLES } from "@/content/sample-articles";
+import { ALL_ARTICLES } from "@/content/articles";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticEntries: MetadataRoute.Sitemap = [
@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  const articleEntries: MetadataRoute.Sitemap = SAMPLE_ARTICLES.map((article) => ({
+  const articleEntries: MetadataRoute.Sitemap = ALL_ARTICLES.map((article) => ({
     url: `${SITE.url}/${article.slug}/`,
     lastModified: article.updatedAt,
     changeFrequency: "daily",

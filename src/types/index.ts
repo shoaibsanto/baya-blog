@@ -80,6 +80,8 @@ export interface JobCircularMeta {
   applicationFee?: string;
   applicationMethod: string;
   source?: string;
+  /** The official notice/memo number, when the source circular states one — a strong trust/authenticity signal. */
+  memoNumber?: string;
   noticeDate?: string;
   publishDate: string;
   deadline: string;
@@ -117,4 +119,10 @@ export interface Article {
   primaryTopic?: string;
   tags?: string[];
   job?: JobCircularMeta;
+  /** Internal provenance for auto-generated posts — not rendered to readers. */
+  automation?: {
+    discoveredFrom: string;
+    discoveredAt: string;
+    reviewed: boolean;
+  };
 }
