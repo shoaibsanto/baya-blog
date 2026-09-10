@@ -6,12 +6,13 @@
 // file per article under content-data/jobs/. Nothing here ever copies their sentences.
 //
 // Usage:
-//   node scripts/discover-and-generate.mjs            # real run, calls Claude, writes files
+//   node scripts/discover-and-generate.mjs            # real run, calls the LLM, writes files
 //   node scripts/discover-and-generate.mjs --dry-run   # no API calls, no files written — just logs
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { randomUUID } from "node:crypto";
 import { listLatestPosts, getPostContent, getCategorySlugMap } from "./lib/bdgovtjobClient.mjs";
 import { extractFacts } from "./lib/extractFacts.mjs";
 import { mapCategories } from "./lib/categoryMap.mjs";
@@ -25,12 +26,15 @@ const DRY_RUN = process.argv.includes("--dry-run");
 const MAX_STATE_IDS = 500;
 
 function loadState() {
-  if (!existsSync(STATE_FILE)) return { seenPostIds: [] };
+  if (!existsSync(STATE_FILE)) return { seenPostIds: [], generationSessionId: null };
   return JSON.parse(readFileSync(STATE_FILE, "utf-8"));
 }
 
 function saveState(state) {
-  const trimmed = { seenPostIds: state.seenPostIds.slice(-MAX_STATE_IDS) };
+  const trimmed = {
+    seenPostIds: state.seenPostIds.slice(-MAX_STATE_IDS),
+    generationSessionId: state.generationSessionId,
+  };
   writeFileSync(STATE_FILE, JSON.stringify(trimmed, null, 2) + "\n", "utf-8");
 }
 
@@ -63,7 +67,7 @@ function templateBody(facts) {
   };
 }
 
-async function processPost(post, categorySlugMap, taken) {
+async function processPost(post, categorySlugMap, taken, sessionId) {
   const sourceCategorySlugs = post.categories.map((id) => categorySlugMap.get(id)).filter(Boolean);
   const mapped = mapCategories(sourceCategorySlugs);
   if (!mapped) {
@@ -82,7 +86,9 @@ async function processPost(post, categorySlugMap, taken) {
   const slug = uniqueSlug(post.slug, taken);
   taken.add(slug);
 
-  const generated = DRY_RUN ? templateBody(facts) : await generateArticleContent(facts, mapped.category);
+  const generated = DRY_RUN
+    ? templateBody(facts)
+    : await generateArticleContent(facts, mapped.category, sessionId);
 
   const article = {
     id: slug,
@@ -145,6 +151,10 @@ async function main() {
   const state = loadState();
   const seenIds = new Set(state.seenPostIds);
   const taken = existingSlugs();
+  // Reused across every run (not regenerated per call) so OpenCode Go sees one
+  // stable "conversation" rather than a fresh session every 10 minutes — see the
+  // caveat at the top of lib/generateArticle.mjs.
+  const sessionId = state.generationSessionId ?? `baya-blog-discovery-${randomUUID()}`;
 
   const [posts, categorySlugMap] = await Promise.all([listLatestPosts(20), getCategorySlugMap()]);
 
@@ -155,7 +165,7 @@ async function main() {
   for (const post of newPosts) {
     console.log(`Processing: ${post.title.rendered} (id ${post.id})`);
     try {
-      const article = await processPost(post, categorySlugMap, taken);
+      const article = await processPost(post, categorySlugMap, taken, sessionId);
       if (article) {
         if (!DRY_RUN) {
           writeFileSync(join(JOBS_DIR, `${article.slug}.json`), JSON.stringify(article, null, 2) + "\n", "utf-8");
@@ -169,7 +179,7 @@ async function main() {
     seenIds.add(post.id);
   }
 
-  if (!DRY_RUN) saveState({ seenPostIds: [...seenIds] });
+  if (!DRY_RUN) saveState({ seenPostIds: [...seenIds], generationSessionId: sessionId });
   console.log(`Done. ${created} article(s) ${DRY_RUN ? "would be " : ""}created.`);
 }
 

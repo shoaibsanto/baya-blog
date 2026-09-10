@@ -1,5 +1,21 @@
-const ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages";
-const MODEL = "claude-sonnet-5";
+// Content generation backend: OpenCode Go (opencode.ai/zen), model mimo-v2.5.
+//
+// IMPORTANT CAVEAT (see ARCHITECTURE.md "Automation Pipeline" for the full note):
+// OpenCode Go is a personal $10/mo subscription meant for interactive coding-agent
+// sessions, not unattended server-side automation — their own docs say traffic is
+// monitored for abuse patterns exactly like a cron job calling this endpoint every
+// few minutes forever. The user was told this explicitly and chose to proceed anyway.
+// To behave as close to their intended usage pattern as possible:
+//   - a stable x-opencode-session ID is reused across every run (persisted in
+//     content-data/.discovery-state.json), not regenerated per call, so it looks
+//     like one long-running "conversation" rather than one new session per cron tick
+//   - a descriptive, non-generic User-Agent identifies this as a real bot, not a
+//     disguised generic HTTP client
+// If this key ever gets rate-limited or the account flagged, that's the tradeoff
+// the user accepted — don't silently fall back to inventing content instead.
+
+const OPENCODE_API_URL = "https://opencode.ai/zen/go/v1/chat/completions";
+const MODEL = "mimo-v2.5";
 
 const SYSTEM_PROMPT = `তুমি BAYA Blog-এর জন্য বাংলাদেশ সরকারি/বেসরকারি চাকরির বিজ্ঞপ্তি নিয়ে original বাংলা কনটেন্ট লেখো।
 
@@ -40,44 +56,59 @@ ${JSON.stringify(facts, null, 2)}
     // কোডটাই সেখানে টেবিল বসিয়ে দেবে।
   ],
   "faq": [{ "question": "string", "answer": "string" }]
-}`;
+}
+
+শুধু JSON আউটপুট দাও, কোনো markdown code fence বা ব্যাখ্যা ছাড়া।`;
 }
 
 /**
- * Calls Claude to turn extracted facts into original Bengali article content.
- * Throws if ANTHROPIC_API_KEY is missing or the API call fails — callers should
+ * Calls the configured LLM backend (OpenCode Go / mimo-v2.5) to turn extracted facts
+ * into original Bengali article content. `sessionId` should be a stable ID reused
+ * across runs (see discover-and-generate.mjs), not a fresh one per call.
+ * Throws if OPENCODE_API_KEY is missing or the API call fails — callers should
  * treat a thrown error as "skip this post, try again next run," never fall back
  * to inventing content some other way.
  */
-export async function generateArticleContent(facts, category) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+export async function generateArticleContent(facts, category, sessionId) {
+  const apiKey = process.env.OPENCODE_API_KEY;
   if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not set — cannot generate article content.");
+    throw new Error("OPENCODE_API_KEY is not set — cannot generate article content.");
   }
 
-  const res = await fetch(ANTHROPIC_API_URL, {
+  const res = await fetch(OPENCODE_API_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
+      authorization: `Bearer ${apiKey}`,
+      "user-agent": "baya-blog-discovery-bot/1.0 (+https://baya.blog)",
+      "x-opencode-session": sessionId,
     },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: 8000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: buildUserPrompt(facts, category) }],
+      temperature: 0,
+      max_tokens: 16000,
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: buildUserPrompt(facts, category) },
+      ],
     }),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`Anthropic API error ${res.status}: ${errText}`);
+    throw new Error(`OpenCode Go API error ${res.status}: ${errText}`);
   }
 
   const data = await res.json();
-  const text = data.content?.[0]?.text;
-  if (!text) throw new Error("Anthropic API returned no content");
+  const choice = data.choices?.[0];
+  if (choice?.finish_reason !== "stop") {
+    throw new Error(
+      `Generation did not finish cleanly (finish_reason: ${choice?.finish_reason ?? "unknown"}) — likely truncated, skipping rather than publishing incomplete content.`
+    );
+  }
+
+  const text = choice.message?.content;
+  if (!text) throw new Error("OpenCode Go API returned no content");
 
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error("Model did not return parseable JSON");

@@ -93,22 +93,43 @@ number/date/name that wasn't supplied.
    extracted, the post is skipped rather than published with guessed data (verified against the live site:
    ~8 of the latest 20 posts have the full `jc-table` format at any given time; the rest are roundup/notice
    posts that correctly get skipped).
-5. **Generate** — `scripts/lib/generateArticle.mjs` calls Claude (`claude-sonnet-5` via the plain Messages
-   API, no SDK dependency) with the extracted facts and a strict system prompt: never invent facts not
-   given, never reuse bdgovtjob.net's sentences, and add sections they don't have (a "who this job suits"
-   analysis, prep tips, an expanded 4–6 question FAQ) — this is what makes the result "1.5–2x" richer, not
-   padding.
+5. **Generate** — `scripts/lib/generateArticle.mjs` calls **OpenCode Go** (`opencode.ai/zen/go/v1`, model
+   `mimo-v2.5`) with the extracted facts and a strict system prompt: never invent facts not given, never
+   reuse bdgovtjob.net's sentences, and add sections they don't have (a "who this job suits" analysis, prep
+   tips, an expanded 4–6 question FAQ) — this is what makes the result "1.5–2x" richer, not padding.
 6. **Write** — the generated prose merges with the deterministically-extracted `job` metadata into one
    `Article` JSON file under `content-data/jobs/<slug>.json`. The GitHub Action commits and pushes only if
    new files were created, which triggers Vercel's existing git-based auto-deploy — no Vercel Cron needed at
    any point (Vercel Cron on the Hobby/free plan is capped at once/day; GitHub Actions on a public repo is
    free with no such cap, which is why the scheduler lives there instead).
 
-**Setup required (not done by this session — needs the user's own key):** add an `ANTHROPIC_API_KEY`
-repository secret in GitHub (Settings → Secrets and variables → Actions → New repository secret) for the
-generation step to run for real. Without it, only `npm run discover:dry-run` (a non-LLM template stand-in,
-used to validate the discovery/extraction plumbing) works; the real workflow will fail loudly on that step
-until the secret is added — it will not silently fall back to inventing content.
+**LLM provider: OpenCode Go, deliberately, despite the fit not being perfect (2026-09-10 decision).**
+OpenCode Go is the user's own personal $10/mo subscription, meant for interactive coding-agent sessions —
+their docs state "traffic is monitored for abuse that degrades the experience for other users," which
+describes a 10-minute unattended cron job pretty precisely. The user was told this explicitly (risk: the
+subscription itself could get flagged/suspended) and chose to proceed anyway — respect that choice if asked
+to touch this again, don't silently swap providers. Mitigations in place: a single stable
+`x-opencode-session` ID is generated once and persisted in `content-data/.discovery-state.json`
+(`generationSessionId`), reused across every run rather than minted fresh per call, and the User-Agent
+(`baya-blog-discovery-bot/1.0`) identifies real bot traffic rather than disguising it.
+
+**Model-specific quirks found during integration (mimo-v2.5 is a reasoning model):**
+- It burns a large, variable number of tokens on hidden `reasoning` content before the actual answer —
+  `max_tokens: 6000` truncated mid-generation (`finish_reason: "length"`) on a real facts payload;
+  `max_tokens: 16000` completed reliably (used ~9.5k of it). `generateArticleContent()` treats any
+  `finish_reason` other than `"stop"` as a hard failure (skip this post, don't publish truncated JSON).
+- `temperature: 0` is required — without it, one test came back as a generic Persian-language tutorial on
+  "how to create a JSON file," completely ignoring the actual instruction. With `temperature: 0` and a clear
+  English-structured schema block, output has been reliable and well-grounded in testing (verified against
+  real bdgovtjob.net facts: it correctly left `requiredDocuments` generic rather than inventing specifics
+  the FACTS block didn't contain, and got every number/date right).
+- Full model catalog available through this endpoint: `GET https://opencode.ai/zen/go/v1/models` — model
+  IDs are lowercase (`mimo-v2.5`, not `MiMo-V2.5` as advertised on the marketing page).
+
+**Setup:** the `OPENCODE_API_KEY` repository secret is already set (added 2026-09-10 via the GitHub API,
+libsodium-sealed against the repo's public key — never committed in plaintext to any file). No further setup
+needed. `npm run discover:dry-run` still exists as a non-LLM template stand-in for testing the
+discovery/extraction plumbing without spending real API calls.
 
 **Content provenance:** every auto-generated article carries an `automation: { discoveredFrom, discoveredAt,
 reviewed: false }` field (not rendered to readers) — a hook for an editorial-review workflow later, and an
