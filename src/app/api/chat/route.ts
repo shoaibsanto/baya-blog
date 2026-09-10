@@ -55,12 +55,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: { messages?: ChatMessage[] };
+  let body: { messages?: ChatMessage[]; sessionId?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: "অবৈধ রিকোয়েস্ট।" }, { status: 400 });
   }
+
+  // OpenCode Go requires x-opencode-session on every request ("cannot be routed
+  // efficiently" otherwise). One session ID per browser chat widget instance (sent by
+  // the client, generated once per conversation) — not one shared ID across all site
+  // visitors, so concurrent conversations don't get bundled together provider-side.
+  const sessionId =
+    typeof body.sessionId === "string" && body.sessionId.length > 0 ? body.sessionId : crypto.randomUUID();
 
   const rawMessages = Array.isArray(body.messages) ? body.messages : [];
   const messages = rawMessages
@@ -85,6 +92,7 @@ export async function POST(req: NextRequest) {
         "content-type": "application/json",
         authorization: `Bearer ${apiKey}`,
         "user-agent": "baya-blog-chatbot/1.0 (+https://baya.blog)",
+        "x-opencode-session": sessionId,
       },
       body: JSON.stringify({
         model: MODEL,

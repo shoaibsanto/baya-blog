@@ -27,6 +27,9 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>(
+    typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`
+  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -55,6 +58,7 @@ export function ChatWidget() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           messages: nextMessages.map(({ role, content }) => ({ role, content })),
+          sessionId: sessionIdRef.current,
         }),
       });
       const data = await res.json();
