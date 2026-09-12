@@ -1,10 +1,10 @@
 const BN_DIGITS = "০১২৩৪৫৬৭৮৯";
 
-export function bnToLatinDigits(str) {
+export function bnToLatinDigits(str: string): string {
   return str.replace(/[০-৯]/g, (d) => String(BN_DIGITS.indexOf(d)));
 }
 
-const MONTHS = {
+const MONTHS: Record<string, number> = {
   "জানুয়ারি": 1,
   "ফেব্রুয়ারি": 2,
   "মার্চ": 3,
@@ -24,7 +24,7 @@ const MONTHS = {
  * Returns null if it can't confidently parse (e.g. multi-date strings like
  * "১০, ১৫, ২৩ সেপ্টেম্বর" — those need editorial attention, not a guess).
  */
-export function parseBnDate(text) {
+export function parseBnDate(text: string | undefined | null): string | null {
   if (!text) return null;
   const latin = bnToLatinDigits(text.trim());
   const monthName = Object.keys(MONTHS).find((m) => text.includes(m));

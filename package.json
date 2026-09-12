@@ -7,10 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "discover": "node scripts/discover-and-generate.mjs",
-    "discover:dry-run": "node scripts/discover-and-generate.mjs --dry-run"
+    "discover:local": "tsx scripts/discover-local.ts"
   },
   "dependencies": {
+    "cheerio": "^1.2.0",
     "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
@@ -20,10 +20,10 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "cheerio": "^1.2.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

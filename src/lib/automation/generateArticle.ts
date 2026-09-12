@@ -1,18 +1,15 @@
+import type { ExtractedFacts } from "./extractFacts";
+
 // Content generation backend: OpenCode Go (opencode.ai/zen), model mimo-v2.5.
 //
 // IMPORTANT CAVEAT (see ARCHITECTURE.md "Automation Pipeline" for the full note):
 // OpenCode Go is a personal $10/mo subscription meant for interactive coding-agent
 // sessions, not unattended server-side automation — their own docs say traffic is
-// monitored for abuse patterns exactly like a cron job calling this endpoint every
-// few minutes forever. The user was told this explicitly and chose to proceed anyway.
-// To behave as close to their intended usage pattern as possible:
-//   - a stable x-opencode-session ID is reused across every run (persisted in
-//     content-data/.discovery-state.json), not regenerated per call, so it looks
-//     like one long-running "conversation" rather than one new session per cron tick
-//   - a descriptive, non-generic User-Agent identifies this as a real bot, not a
-//     disguised generic HTTP client
-// If this key ever gets rate-limited or the account flagged, that's the tradeoff
-// the user accepted — don't silently fall back to inventing content instead.
+// monitored for abuse patterns exactly like a cron job calling this endpoint daily.
+// The user was told this explicitly and chose to proceed anyway. To behave as close
+// to their intended usage pattern as possible, a stable x-opencode-session ID is
+// reused across every run (persisted alongside the discovery state), not regenerated
+// per call, and a descriptive User-Agent identifies this as a real bot.
 
 const OPENCODE_API_URL = "https://opencode.ai/zen/go/v1/chat/completions";
 const MODEL = "mimo-v2.5";
@@ -27,7 +24,7 @@ const SYSTEM_PROMPT = `তুমি BAYA Blog-এর জন্য বাংল�
 5. শুধু বৈধ JSON আউটপুট দেবে, অন্য কোনো ব্যাখ্যা বা মার্কডাউন ফেন্স ছাড়া।
 6. output অবশ্যই দেওয়া JSON schema-এর সাথে হুবহু মিলতে হবে।`;
 
-function buildUserPrompt(facts, category) {
+function buildUserPrompt(facts: ExtractedFacts, category: string): string {
   return `FACTS (একমাত্র সত্য উৎস, এর বাইরের কোনো তথ্য উদ্ভাবন করবে না):
 ${JSON.stringify(facts, null, 2)}
 
@@ -61,15 +58,30 @@ ${JSON.stringify(facts, null, 2)}
 শুধু JSON আউটপুট দাও, কোনো markdown code fence বা ব্যাখ্যা ছাড়া।`;
 }
 
+export interface GeneratedArticleContent {
+  title: string;
+  excerpt: string;
+  tags: string[];
+  primaryTopic: string;
+  qualificationLevels: string[];
+  employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACTOR" | "TEMPORARY" | "INTERN" | "OTHER";
+  requiredDocuments: string[];
+  body: unknown[];
+  faq: { question: string; answer: string }[];
+}
+
 /**
- * Calls the configured LLM backend (OpenCode Go / mimo-v2.5) to turn extracted facts
- * into original Bengali article content. `sessionId` should be a stable ID reused
- * across runs (see discover-and-generate.mjs), not a fresh one per call.
+ * Calls OpenCode Go to turn extracted facts into original Bengali article content.
+ * `sessionId` should be a stable ID reused across runs, not a fresh one per call.
  * Throws if OPENCODE_API_KEY is missing or the API call fails — callers should
  * treat a thrown error as "skip this post, try again next run," never fall back
  * to inventing content some other way.
  */
-export async function generateArticleContent(facts, category, sessionId) {
+export async function generateArticleContent(
+  facts: ExtractedFacts,
+  category: string,
+  sessionId: string
+): Promise<GeneratedArticleContent> {
   const apiKey = process.env.OPENCODE_API_KEY;
   if (!apiKey) {
     throw new Error("OPENCODE_API_KEY is not set — cannot generate article content.");
@@ -107,11 +119,11 @@ export async function generateArticleContent(facts, category, sessionId) {
     );
   }
 
-  const text = choice.message?.content;
+  const text: string | undefined = choice.message?.content;
   if (!text) throw new Error("OpenCode Go API returned no content");
 
   const jsonMatch = text.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error("Model did not return parseable JSON");
 
-  return JSON.parse(jsonMatch[0]);
+  return JSON.parse(jsonMatch[0]) as GeneratedArticleContent;
 }

@@ -74,34 +74,58 @@ expression of them is. All prose (org description, eligibility explanation, prep
 fresh, grounded strictly in those facts, with an explicit instruction to the model to never invent a
 number/date/name that wasn't supplied.
 
-**How it works (`scripts/discover-and-generate.mjs`, run every 10 minutes by
-`.github/workflows/discover-jobs.yml`):**
+**Runs on Vercel Cron, not GitHub Actions (revised 2026-09-12).** The original design used a GitHub Actions
+workflow on a 10-minute cron. In practice it failed intermittently (email notifications piling up for the
+user) and the user explicitly asked to drop GitHub Actions entirely and run this the way Vercel's own free
+Hobby-plan cron works instead: **once a day, at a fixed time**, doing a full day's worth of discovery +
+generation + existing-content-refresh in one batch. Vercel Hobby allows up to **300 seconds per function
+invocation** (checked directly against Vercel's docs before building this — see "Vercel Hobby function
+limits" below), which is enough for a daily batch of a reasonable size but is a real ceiling: this is why the
+design below is careful about time budgeting and about not losing partial progress.
+
+**How it works (`src/lib/automation/*.ts`, invoked by `src/app/api/cron/discover-jobs/route.ts`, scheduled
+in `vercel.json` at `0 15 * * *` = 21:00 Bangladesh time daily — change that cron string if a different time
+is wanted, it's a one-line edit):**
 1. **Discover** — bdgovtjob.net runs WordPress with a fully open REST API (`/wp-json/wp/v2/posts`,
-   `/wp-json/wp/v2/categories`) — far more reliable than HTML scraping. The script lists the latest posts
-   and diffs against `content-data/.discovery-state.json` (a list of already-seen post IDs) to find new ones.
-2. **Category-gate** — `scripts/lib/categoryMap.mjs` maps their category slugs to ours
-   (`government-jobs-circular` → `government-jobs`, etc.). Posts with no mapped job category (assignments,
-   admit-card notices, exam-date posts, multi-circular roundup posts) are skipped entirely — this pipeline
-   only ever touches single-organization job-circular posts.
-3. **Extract facts** — `scripts/lib/extractFacts.mjs` (cheerio) parses their `<table class="jc-table">`
-   key/value markup (a WordPress custom template used consistently across their job-circular posts) to pull
-   organization info, the summary table, and the per-position table as plain data. **Important gotcha found
-   and fixed:** their HTML mixes NFC/NFD Unicode normalization for some Bengali conjuncts (e.g. "অফিশিয়াল"),
-   which silently breaks exact-string label matching unless both the HTML and the label maps are
-   `.normalize("NFC")`-ed first — done at the top of `extractFacts()`.
-4. **Mandatory-fact gate** — if organization name, vacancy count, deadline, or publish date can't be
+   `/wp-json/wp/v2/categories`) — far more reliable than HTML scraping. `bdgovtjobClient.ts` lists the latest
+   50 posts (covers a full day's volume with margin) including each post's `modified` timestamp.
+2. **New vs. updated vs. unchanged** — `orchestrator.ts` compares each post against
+   `content-data/.discovery-state.json`, which tracks `{ [postId]: { slug, modified } }`. Not seen before →
+   new. Seen, but `modified` changed → **existing-content update** (e.g. a deadline extension edited into the
+   original post) — re-extract and regenerate that article in place, preserving its original `publishedAt`
+   and slug. Seen and unchanged → skipped, no API calls spent. There's also a one-time safety net: if a post
+   isn't tracked yet but a content file with its slug already exists (state file predates per-post tracking,
+   or any other reason), it's adopted as the tracked baseline instead of being regenerated under a `-2`
+   suffixed slug — that dedup check matters, without it a stale state file would silently duplicate content.
+3. **Category-gate** — `categoryMap.ts` maps their category slugs to ours (`government-jobs-circular` →
+   `government-jobs`, etc.). Posts with no mapped job category (assignments, admit-card notices, exam-date
+   posts, multi-circular roundup posts) are skipped entirely.
+4. **Extract facts** — `extractFacts.ts` (cheerio) parses their `<table class="jc-table">` key/value markup
+   (a WordPress custom template used consistently across their job-circular posts) to pull organization info,
+   the summary table, and the per-position table as plain data. **Important gotcha found and fixed:** their
+   HTML mixes NFC/NFD Unicode normalization for some Bengali conjuncts (e.g. "অফিশিয়াল"), which silently
+   breaks exact-string label matching unless both the HTML and the label maps are `.normalize("NFC")`-ed
+   first — done at the top of `extractFacts()`.
+5. **Mandatory-fact gate** — if organization name, vacancy count, deadline, or publish date can't be
    extracted, the post is skipped rather than published with guessed data (verified against the live site:
-   ~8 of the latest 20 posts have the full `jc-table` format at any given time; the rest are roundup/notice
-   posts that correctly get skipped).
-5. **Generate** — `scripts/lib/generateArticle.mjs` calls **OpenCode Go** (`opencode.ai/zen/go/v1`, model
-   `mimo-v2.5`) with the extracted facts and a strict system prompt: never invent facts not given, never
-   reuse bdgovtjob.net's sentences, and add sections they don't have (a "who this job suits" analysis, prep
-   tips, an expanded 4–6 question FAQ) — this is what makes the result "1.5–2x" richer, not padding.
-6. **Write** — the generated prose merges with the deterministically-extracted `job` metadata into one
-   `Article` JSON file under `content-data/jobs/<slug>.json`. The GitHub Action commits and pushes only if
-   new files were created, which triggers Vercel's existing git-based auto-deploy — no Vercel Cron needed at
-   any point (Vercel Cron on the Hobby/free plan is capped at once/day; GitHub Actions on a public repo is
-   free with no such cap, which is why the scheduler lives there instead).
+   roughly 8 of the latest 20 posts have the full `jc-table` format at any given time; the rest are
+   roundup/notice posts that correctly get skipped).
+6. **Generate** — `generateArticle.ts` calls **OpenCode Go** (`opencode.ai/zen/go/v1`, model `mimo-v2.5`)
+   with the extracted facts and a strict system prompt: never invent facts not given, never reuse
+   bdgovtjob.net's sentences, and add sections they don't have (a "who this job suits" analysis, prep tips, an
+   expanded 4–6 question FAQ) — this is what makes the result "1.5–2x" richer, not padding.
+7. **Commit as one batch** — `githubCommit.ts` builds ONE git commit via the GitHub Git Data API (create
+   blobs → tree → commit → move the `main` ref) covering every new/updated article file plus the refreshed
+   state file, and pushes it. One commit per run (not one per file) means the day's batch triggers exactly
+   one Vercel deployment, matching "সব একবারে আপডেট". This also sidesteps a real constraint: Vercel
+   serverless functions have a read-only, ephemeral filesystem, so there's no local git checkout to commit
+   from — writing has to go through GitHub's API directly, which is what this module does.
+
+**Time budget:** the processing loop stops with ~20s to spare once 240 of the 300s ceiling are used, so the
+final commit step always has room to run. Anything not reached in that window simply stays untouched in
+state and gets picked up on the *next* day's run — nothing is lost, it's just delayed a day in an unusually
+busy news cycle. A local test on 2026-09-12 (real generation calls, no commit) processed 2 articles before
+hitting a lower local time budget and stopped cleanly, confirming this path works as designed.
 
 **LLM provider: OpenCode Go, deliberately, despite the fit not being perfect (2026-09-10 decision).**
 OpenCode Go is the user's own personal $10/mo subscription, meant for interactive coding-agent sessions —
@@ -126,10 +150,27 @@ to touch this again, don't silently swap providers. Mitigations in place: a sing
 - Full model catalog available through this endpoint: `GET https://opencode.ai/zen/go/v1/models` — model
   IDs are lowercase (`mimo-v2.5`, not `MiMo-V2.5` as advertised on the marketing page).
 
-**Setup:** the `OPENCODE_API_KEY` repository secret is already set (added 2026-09-10 via the GitHub API,
-libsodium-sealed against the repo's public key — never committed in plaintext to any file). No further setup
-needed. `npm run discover:dry-run` still exists as a non-LLM template stand-in for testing the
-discovery/extraction plumbing without spending real API calls.
+**Setup required — three Vercel project environment variables (Settings → Environment Variables), none of
+which any MCP tool available in this session could set directly, so this needs the user to add them by
+hand:**
+- `OPENCODE_API_KEY` — same OpenCode Go key as before (it had been stored as a GitHub Actions secret, which
+  was deleted 2026-09-12 since Actions is no longer used at all here).
+- `GITHUB_TOKEN` — a token with `contents: read/write` on `shoaibsanto/baya-blog`, used by `githubCommit.ts`
+  to push the daily batch. A fresh fine-grained PAT scoped to just this repo is the cleaner option over
+  reusing a broader-scope token.
+- `CRON_SECRET` — any random string. Vercel automatically sends it as `Authorization: Bearer <value>` on
+  cron-triggered requests once this env var exists; the route handler checks that header and 401s otherwise,
+  which is what keeps `/api/cron/discover-jobs` from being a public "regenerate content" button for anyone
+  who finds the URL.
+
+**Vercel Hobby function limits (verified directly against Vercel's docs 2026-09-12, not assumed):** 300
+seconds is both the default *and* the maximum duration on Hobby — there is no way to request more on this
+plan (Pro/Enterprise get up to 800s standard, 1800s in beta). `maxDuration = 300` is set on the route.
+
+**Local testing:** `npm run discover:local` runs the exact same `src/lib/automation/*` modules the deployed
+route uses (not a separate reimplementation) — dry-run by default (no GitHub commit, but *does* call the
+real LLM if `OPENCODE_API_KEY` is set, so it still costs real API usage — use it deliberately, not as a cheap
+smoke test). Pass `--live` to also commit for real, exactly like production.
 
 **Content provenance:** every auto-generated article carries an `automation: { discoveredFrom, discoveredAt,
 reviewed: false }` field (not rendered to readers) — a hook for an editorial-review workflow later, and an
