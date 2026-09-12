@@ -60,14 +60,19 @@ export interface RunResult {
 
 /**
  * One full run: discover new + changed posts on bdgovtjob.net, generate/refresh
- * original content, and push everything as one commit. `timeBudgetMs` bounds how
- * long the (LLM-heavy) processing loop runs — Vercel's 300s Hobby-plan ceiling
- * means we must stop with margin to spare for the final git commit step; anything
- * not reached this run naturally gets picked up the next scheduled run, since
- * state is only updated for posts actually processed.
+ * original content, and push everything as one commit. `timeBudgetMs` is the point
+ * after which the loop stops *starting* new posts — Vercel's 300s Hobby-plan
+ * ceiling is a hard `FUNCTION_INVOCATION_TIMEOUT` (no commit at all that run) if
+ * exceeded, so this has to leave room for the single slowest remaining post PLUS
+ * the final git commit step, not just "some" margin. Each post's own network calls
+ * are capped too (20s for bdgovtjob.net, 110s for the LLM call — see
+ * bdgovtjobClient.ts / generateArticle.ts), so 130,000ms here is sized as
+ * (130s budget) + (~130s worst-case single post) + (~40s commit) ≈ 300s, not
+ * padding pulled from nowhere. Anything not reached this run gets picked up the
+ * next scheduled run, since state is only updated for posts actually processed.
  */
 export async function runDiscovery({
-  timeBudgetMs = 240_000,
+  timeBudgetMs = 130_000,
   perPage = 50,
   dryRun = false,
 }: { timeBudgetMs?: number; perPage?: number; dryRun?: boolean } = {}): Promise<RunResult> {
@@ -90,7 +95,7 @@ export async function runDiscovery({
   let timedOut = false;
 
   for (const post of posts) {
-    if (timeLeft() < 20_000) {
+    if (timeLeft() < 0) {
       timedOut = true;
       break;
     }

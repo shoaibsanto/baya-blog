@@ -121,11 +121,28 @@ is wanted, it's a one-line edit):**
    serverless functions have a read-only, ephemeral filesystem, so there's no local git checkout to commit
    from — writing has to go through GitHub's API directly, which is what this module does.
 
-**Time budget:** the processing loop stops with ~20s to spare once 240 of the 300s ceiling are used, so the
-final commit step always has room to run. Anything not reached in that window simply stays untouched in
-state and gets picked up on the *next* day's run — nothing is lost, it's just delayed a day in an unusually
-busy news cycle. A local test on 2026-09-12 (real generation calls, no commit) processed 2 articles before
-hitting a lower local time budget and stopped cleanly, confirming this path works as designed.
+**Time budget — revised after a real `FUNCTION_INVOCATION_TIMEOUT` in production (2026-09-12).** The first
+live test against `https://baya.blog/api/cron/discover-jobs` (once real env vars were set) worked correctly
+— HTTP 200, one article created and committed, `timedOut: true` reported honestly because a backlog had
+built up while the pipeline was broken. The *second* live run, clearing more of that backlog, got a genuine
+504 `FUNCTION_INVOCATION_TIMEOUT` from Vercel — the original design only checked the time budget *between*
+posts (`timeLeft() < 20_000`), so a single slow `generateArticleContent` call starting near the edge of the
+240s internal budget could still run the whole invocation past Vercel's hard 300s ceiling, and a timeout kill
+means **no commit at all** for that run, losing more progress than a plain early-stop would have. Fixed by
+budgeting for the worst case explicitly rather than assuming calls are fast:
+- `generateArticleContent()`'s fetch now has `signal: AbortSignal.timeout(110_000)` — the longest successful
+  call observed in testing was ~90s; past 110s it's presumed hung and aborted, so the post gets caught by
+  `processPost`'s try/catch and recorded in `skipped` instead of holding the function hostage.
+- `bdgovtjobClient.ts`'s fetches get a 20s timeout too — a slow/hung request to the *source* site shouldn't
+  be able to eat the run either.
+- `timeBudgetMs` (when the loop stops *starting* new posts) dropped from 240,000 to **130,000ms** — sized as
+  130s (budget) + ~130s (one worst-case remaining post: 20s fetch + 110s generation) + ~40s (commit) ≈ 300s,
+  not an arbitrary smaller number.
+
+Anything not reached in the window simply stays untouched in state and gets picked up on the *next* day's
+run — nothing is lost, it's just delayed a day in an unusually busy news cycle (or while clearing an
+accumulated backlog, as happened here). If a `FUNCTION_INVOCATION_TIMEOUT` shows up again, the fix is *not*
+"raise timeBudgetMs" — it's "find which call has no timeout yet."
 
 **LLM provider: OpenCode Go, deliberately, despite the fit not being perfect (2026-09-10 decision).**
 OpenCode Go is the user's own personal $10/mo subscription, meant for interactive coding-agent sessions —

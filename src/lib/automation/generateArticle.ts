@@ -87,6 +87,11 @@ export async function generateArticleContent(
     throw new Error("OPENCODE_API_KEY is not set — cannot generate article content.");
   }
 
+  // Hard per-call cap: a single hung/slow generation call has been observed pushing
+  // the whole cron invocation past Vercel's 300s function ceiling (FUNCTION_INVOCATION_TIMEOUT,
+  // no commit at all that run — worse than just skipping one post). 110s covers every
+  // successful call seen in testing (max ~90s) with margin, and leaves enough of the
+  // orchestrator's time budget for the post-loop git commit step.
   const res = await fetch(OPENCODE_API_URL, {
     method: "POST",
     headers: {
@@ -104,6 +109,7 @@ export async function generateArticleContent(
         { role: "user", content: buildUserPrompt(facts, category) },
       ],
     }),
+    signal: AbortSignal.timeout(110_000),
   });
 
   if (!res.ok) {

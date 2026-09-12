@@ -3,6 +3,9 @@ const BASE = "https://bdgovtjob.net/wp-json/wp/v2";
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url, {
     headers: { "User-Agent": "baya-blog-discovery-bot/1.0 (+https://baya.blog)" },
+    // A hung request to a third-party site should never be able to eat the whole
+    // cron invocation's time budget — fail fast and let the caller move on.
+    signal: AbortSignal.timeout(20_000),
   });
   if (!res.ok) throw new Error(`bdgovtjob.net fetch failed: ${res.status} ${url}`);
   return res.json() as Promise<T>;
