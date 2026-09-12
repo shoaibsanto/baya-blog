@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BAYA Blog
 
-## Getting Started
+Bangladesh job-circular platform (Next.js, App Router) — sourced categories, per-organization and
+per-qualification hubs, an RSS feed, an AI job-assistant chat widget, and a daily Vercel Cron pipeline that
+discovers new/updated circulars on bdgovtjob.net and republishes original, fact-grounded content.
 
-First, run the development server:
+Live at [baya.blog](https://baya.blog).
+
+## Architecture
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full design history — taxonomy decisions, the content
+model, the discovery/generation pipeline, and known gotchas. Read it before making structural changes.
+
+## Local development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Each article is its own JSON file under `content-data/jobs/<slug>.json`, loaded by `src/content/articles.ts`.
+New content is added as new files — never by editing a shared array — so the automated pipeline below can
+never collide with hand-written edits.
 
-## Learn More
+## Automated discovery pipeline
 
-To learn more about Next.js, take a look at the following resources:
+`src/app/api/cron/discover-jobs/route.ts`, scheduled once daily in `vercel.json`, watches bdgovtjob.net's
+open WordPress REST API as a "a circular exists/changed" signal, extracts structured facts from their page
+markup, and generates original Bengali content grounded in those facts via OpenCode Go (`mimo-v2.5`) — see
+`src/lib/automation/`. Test locally without touching production:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run discover:local          # dry-run: real generation calls, no GitHub commit
+npm run discover:local -- --live  # also commits, exactly like production
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Requires three Vercel project environment variables: `OPENCODE_API_KEY`, `GITHUB_TOKEN` (contents
+read/write on this repo), and `CRON_SECRET` (any random string — Vercel sends it automatically as the cron
+request's `Authorization` header once it's set).
