@@ -1,0 +1,191 @@
+{
+  "id": "idra-job-circular",
+  "slug": "idra-job-circular",
+  "category": "government-jobs",
+  "title": "বীমা উন্নয়ন ও নিয়ন্ত্রণ কর্তৃপক্ষে আর্থিক ও তথ্য প্রযুক্তি পরামর্শক নিয়োগ বিজ্ঞপ্তি ২০২৬",
+  "excerpt": "বীমা উন্নয়ন ও নিয়ন্ত্রণ কর্তৃপক্ষ ২টি পদে পরামর্শক নিয়োগ দিচ্ছে। আবেদনের শেষ তারিখ ২৯ সেপ্টেম্বর ২০২৬।",
+  "contentType": "job-circular",
+  "author": {
+    "id": "editorial",
+    "name": "BAYA Blog সম্পাদকীয় দল"
+  },
+  "publishedAt": "2026-09-15",
+  "updatedAt": "2026-09-15",
+  "lastVerifiedAt": "2026-09-15",
+  "officialSource": {
+    "name": "বীমা উন্নয়ন ও নিয়ন্ত্রণ কর্তৃপক্ষ",
+    "url": "http://www.idra.org.bd"
+  },
+  "primaryTopic": "বীমা-উন্নয়ন-ও-নিয়ন্ত্রণ-কর্তৃপক্ষ",
+  "tags": [
+    "সরকারি চাকরি",
+    "বীমা কর্তৃপক্ষ",
+    "পরামর্শক পদ",
+    "ঢাকা চাকরি",
+    "নিয়োগ ২০২৬"
+  ],
+  "job": {
+    "organization": {
+      "name": "বীমা উন্নয়ন ও নিয়ন্ত্রণ কর্তৃপক্ষ",
+      "website": "http://www.idra.org.bd",
+      "address": "সাধারণ বীমা টাওয়ার (৯ম তলা), ৩৭/এ, দিলকুশা বা/এ, ঢাকা",
+      "phone": "০২-৪১০৫১৩৮১-৮৪",
+      "email": "ddadmin@idra.org.bd, idra.bd@gmail.com"
+    },
+    "jobLocation": "ঢাকা (দিলকুশা)",
+    "positionCategoryCount": "০২",
+    "totalVacancy": "০২",
+    "jobType": "government-jobs",
+    "educationRequirement": "সিএ ও স্নাতকোত্তর পাস",
+    "qualificationLevels": [
+      "graduate",
+      "masters"
+    ],
+    "ageLimit": "সর্বনিম্ন ৪০ বছর / ৪০ বছর বা তদূর্ধ্ব",
+    "applicationFee": "বিনামূল্যে (কোনো ফি নেই)",
+    "applicationMethod": "ডাকযোগে / সরাসরি",
+    "source": "দৈনিক আমার দেশ",
+    "memoNumber": "৫৩.০৩.০০০০.০০০.০০৯.১১.০০০৮.২৬.৩৪৬",
+    "noticeDate": "2026-09-14",
+    "publishDate": "2026-09-15",
+    "deadline": "2026-09-29",
+    "employmentType": "FULL_TIME",
+    "positions": [
+      {
+        "name": "আর্থিক বিষয়ক পরামর্শক",
+        "vacancy": "১টি",
+        "salary": "আলোচনা সাপেক্ষে"
+      },
+      {
+        "name": "তথ্য প্রযুক্তি বিষয়ক পরামর্শক",
+        "vacancy": "১টি",
+        "salary": "আলোচনা সাপেক্ষে"
+      }
+    ],
+    "requiredDocuments": [
+      "আবেদনপত্র",
+      "শিক্ষাগত সনদপত্র",
+      "পেশাগত অভিজ্ঞতার সনদপত্র"
+    ]
+  },
+  "body": [
+    {
+      "type": "callout",
+      "variant": "info",
+      "title": "গুরুত্বপূর্ণ তথ্য",
+      "text": "আবেদনের শেষ তারিখ: ২৯ সেপ্টেম্বর ২০২৬ (অফিস চলাকালীন সময়)।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "প্রতিষ্ঠানের তথ্য",
+      "id": "organization-info"
+    },
+    {
+      "type": "paragraph",
+      "text": "বীমা উন্নয়ন ও নিয়ন্ত্রণ কর্তৃপক্ষ বাংলাদেশের একটি সরকারি প্রতিষ্ঠান। ঠিকানা: সাধারণ বীমা টাওয়ার (৯ম তলা), ৩৭/এ, দিলকুশা বা/এ, ঢাকা। যোগাযোগ: ০২-৪১০৫১৩৮১-৮৪, ইমেইল: ddadmin@idra.org.bd।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "পদ ও পদসংখ্যা",
+      "id": "positions"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "শিক্ষাগত যোগ্যতা",
+      "id": "education"
+    },
+    {
+      "type": "paragraph",
+      "text": "সিএ ও স্নাতকোত্তর পাস প্রয়োজন।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "বয়সসীমা",
+      "id": "age-limit"
+    },
+    {
+      "type": "paragraph",
+      "text": "সর্বনিম্ন ৪০ বছর বয়স হতে হবে (৪০ বছর বা তদূর্ধ্ব)।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "আবেদন পদ্ধতি ও ফি",
+      "id": "application-method"
+    },
+    {
+      "type": "paragraph",
+      "text": "আবেদন ডাকযোগে বা সরাসরি জমা দেওয়া যাবে। কোনো ফি প্রয়োজন নেই।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "আবেদনের শেষ তারিখ",
+      "id": "deadline"
+    },
+    {
+      "type": "paragraph",
+      "text": "২৯ সেপ্টেম্বর ২০২৬ (অফিস চলাকালীন সময়)।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "এই চাকরি কাদের জন্য উপযুক্ত",
+      "id": "suitability"
+    },
+    {
+      "type": "paragraph",
+      "text": "যারা আর্থিক বা তথ্য প্রযুক্তি ক্ষেত্রে পেশাদার অভিজ্ঞতা রাখেন এবং স্নাতকোত্তর শিক্ষিত, তাদের জন্য এই পদগুলো উপযুক্ত।"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "প্রস্তুতি টিপস",
+      "id": "preparation-tips"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "আবেদনপত্র সঠিকভাবে পূরণ করুন এবং প্রাসঙ্গিক সনদপত্র সংযুক্ত করুন।",
+        "সময়মতো আবেদন জমা দিন, দেরি করবেন না।",
+        "নির্ধারিত ঠিকানায় ডাকযোগে পাঠান বা সরাসরি জমা দিন।"
+      ]
+    }
+  ],
+  "faq": [
+    {
+      "question": "চাকরির পদগুলো কি কি?",
+      "answer": "আর্থিক বিষয়ক পরামর্শক এবং তথ্য প্রযুক্তি বিষয়ক পরামর্শক।"
+    },
+    {
+      "question": "শিক্ষাগত যোগ্যতা কত?",
+      "answer": "সিএ ও স্নাতকোত্তর পাস প্রয়োজন।"
+    },
+    {
+      "question": "বয়সসীমা কত?",
+      "answer": "সর্বনিম্ন ৪০ বছর বয়স হতে হবে।"
+    },
+    {
+      "question": "আবেদন ফি কত?",
+      "answer": "বিনামূল্যে, কোনো ফি নেই।"
+    },
+    {
+      "question": "আবেদন কীভাবে করবেন?",
+      "answer": "ডাকযোগে বা সরাসরি অফিসে জমা দিতে হবে।"
+    },
+    {
+      "question": "শেষ তারিখ কবে?",
+      "answer": "২৯ সেপ্টেম্বর ২০২৬ (অফিস চলাকালীন সময়)।"
+    }
+  ],
+  "automation": {
+    "discoveredFrom": "https://bdgovtjob.net/idra-job-circular/",
+    "discoveredAt": "2026-09-15T15:39:59.858Z",
+    "reviewed": false
+  }
+}
