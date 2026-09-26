@@ -47,7 +47,12 @@ export function generateArticleMetadata(article: Article): Metadata {
   const canonical = generateCanonical(article.slug);
   const image = article.featuredImage
     ? { url: article.featuredImage.src, alt: article.featuredImage.alt }
-    : DEFAULT_OG_IMAGE;
+    : {
+        url: `${SITE.url}/api/og?title=${encodeURIComponent(article.title)}&category=${article.category}&org=${encodeURIComponent(article.job?.organization?.name || '')}`,
+        width: 1200,
+        height: 630,
+        alt: article.title,
+      };
   return {
     title: article.title,
     description: article.excerpt,
@@ -62,11 +67,14 @@ export function generateArticleMetadata(article: Article): Metadata {
       type: "article",
       publishedTime: article.publishedAt,
       modifiedTime: article.updatedAt,
-      images: image ? [image] : undefined,
+      tags: article.tags,
+      images: [image],
     },
     twitter: {
-      card: image ? "summary_large_image" : "summary",
-      images: image ? [image.url] : undefined,
+      card: "summary_large_image",
+      images: [typeof image === 'object' ? image.url : image],
+      title: article.title,
+      description: article.excerpt,
     },
   };
 }
