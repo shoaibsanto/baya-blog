@@ -32,51 +32,51 @@ export const CATEGORIES: CategoryConfig[] = [
   },
   {
     slug: "private-jobs",
-    name: "প্রাইভেট চাকরি",
-    shortName: "প্রাইভেট চাকরি",
-    description: "বেসরকারি প্রতিষ্ঠান ও কোম্পানির নিয়োগ বিজ্ঞপ্তি",
+    name: "প্ৰাইভেট চাকরি",
+    shortName: "প্ৰাইভেট চাকরি",
+    description: "বেসরকারি প্ৰতিষ্ঠান ও কোম্পানির নিযোৰ্গ বিজ্ঞপ্তি",
   },
   {
     slug: "ngo-jobs",
     name: "এনজিও চাকরি",
     shortName: "এনজিও",
-    description: "দেশি-বিদেশি এনজিও ও উন্নয়ন সংস্থার নিয়োগ বিজ্ঞপ্তি",
+    description: "দেশি-বিশেষি এনজিও ও উন্নয়ন সংস্থার নিযোৰ্গ বিজ্ঞপ্তি",
   },
   {
     slug: "pharma-jobs",
     name: "ফার্মাসিউটিক্যালস চাকরি",
     shortName: "ফার্মা",
-    description: "ফার্মাসিউটিক্যাল কোম্পানির মেডিকেল প্রমোশন অফিসারসহ অন্যান্য নিয়োগ",
+    description: "ফার্মাসিউটিক্যাল কোম্পানির মেডিকেল প্ৰমোশন অফিসারসহ অন্যান্য নিযোৰ্গ",
   },
   {
     slug: "group-of-company-jobs",
-    name: "গ্রুপ অব কোম্পানি চাকরি",
-    shortName: "গ্রুপ অব কোম্পানি",
-    description: "বড় শিল্প গ্রুপ ও কনগ্লোমারেটের নিয়োগ বিজ্ঞপ্তি",
+    name: "গ্রুপ অফ কোম্পানি চাকরি",
+    shortName: "গ্রুপ অফ কোম্পানি",
+    description: "বড় শিল্প গ্রুপ ও কনগ্লোমারেটের নিযোৰ্গ বিজ্ঞপ্তি",
   },
   {
     slug: "university-jobs",
     name: "বিশ্ববিদ্যালয় চাকরি",
     shortName: "বিশ্ববিদ্যালয়",
-    description: "পাবলিক ও প্রাইভেট বিশ্ববিদ্যালয়ের শিক্ষক ও কর্মকর্তা নিয়োগ",
+    description: "পাবলিক ও প্ৰাইভেট বিশ্ববিদ্যালয়ের শিক্ষক ও কর্মকর্তা নিযোৰ্গ",
   },
   {
     slug: "defence-jobs",
     name: "ডিফেন্স চাকরি",
     shortName: "ডিফেন্স",
-    description: "সেনা, নৌ, বিমান বাহিনী ও প্রতিরক্ষা সংশ্লিষ্ট নিয়োগ বিজ্ঞপ্তি",
+    description: "সেনা, নৌ, বিমান বাহিনী ও প্ৰতিরক্ষা সংশ্লিষ্ট নিযোৰ্গ বিজ্ঞপ্তি",
   },
   {
     slug: "teletalk-application",
     name: "টেলিটক অনলাইন আবেদন",
     shortName: "অনলাইনে আবেদন",
-    description: "টেলিটকের মাধ্যমে অনলাইনে আবেদনযোগ্য সরকারি নিয়োগ বিজ্ঞপ্তি",
+    description: "টেলিটকের মাধ্যমে অনলাইনে আবেদনযোগ্য সরকারি নিযোৰ্গ বিজ্ঞপ্তি",
   },
   {
     slug: "hot-jobs",
     name: "হট জবস",
     shortName: "হট জবস",
-    description: "আবেদনের শেষ সময় ঘনিয়ে আসা ও বেশি খোঁজা হচ্ছে এমন নিয়োগ বিজ্ঞপ্তি",
+    description: "আবেদনের শেষ সময় ঘনিষ্ঠ হয়ে আসা ও বেশি খোঁজা হচ্ছে এমন নিযোৰ্গ বিজ্ঞপ্তি",
   },
 ];
 
@@ -93,11 +93,16 @@ export const SITE = {
   name: "BAYA Blog",
   url: "https://baya.blog",
   description:
-    "বাংলাদেশের সরকারি, বেসরকারি, ব্যাংক ও এনজিও চাকরির সবচেয়ে হালনাগাদ নিয়োগ বিজ্ঞপ্তি — যাচাইকৃত তথ্য, সহজ ভাষায়।",
+    "বাংলার্দেশের সরকারি, বেসরকারি, ব্যাংক ও এনজিও চাকরির সবচেয়ে হালনাগাদ নিযোৰ্গ বিজ্ঞপ্তি — যাচাইকৃত তথ্য, সহজ ভাষায়।",
 };
 
-/** Default Open Graph / Twitter card image. Currently unset — logo/cover branding is on hold for now. */
-export const DEFAULT_OG_IMAGE: { url: string; width: number; height: number; alt: string } | null = null;
+/** Default Open Graph / Twitter card image — dynamically generated per page. */
+export const DEFAULT_OG_IMAGE = {
+  url: `${SITE.url}/api/og?title=BAYA+Blog&category=government-jobs`,
+  width: 1200,
+  height: 630,
+  alt: `${SITE.name} — বাংলার্দেশের চাকরির খবর`,
+} as const;
 
 export function getCategory(slug: string): CategoryConfig | undefined {
   return CATEGORIES.find((c) => c.slug === slug);
