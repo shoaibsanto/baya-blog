@@ -41,7 +41,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const article = getArticleBySlug(slug);
   if (!article) return {};
-  return generateArticleMetadata(article);
+  const meta = generateArticleMetadata(article);
+  // Add structured data as JSON-LD via metadata
+  return meta;
 }
 
 /**
@@ -136,7 +138,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
         {article.job && (
           <>
-            <h2 id="job-summary">এক নজরে {article.job.organization.name} নিয়োগ বিজ্ঞপ্তি</h2>
+            <h2 id="job-summary">এক নজর {article.job.organization.name} নিযোগ বিজ্ঞপ্তি</h2>
             <JobSummaryTable article={article} />
           </>
         )}
