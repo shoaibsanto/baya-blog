@@ -9,11 +9,20 @@ const WEBSITE_ID = `${SITE.url}/#website`;
 export function generateOrganizationSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "NewsMediaOrganization",
     "@id": ORG_ID,
     name: SITE.name,
     url: SITE.url,
     description: SITE.description,
+    sameAs: [
+      "https://facebook.com/bayablog",
+      "https://twitter.com/bayablog",
+    ],
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE.url}/api/og?title=BAYA+Logo`,
+    },
+    publisher: { "@id": ORG_ID },
   };
 }
 
@@ -51,16 +60,20 @@ export function generateBreadcrumbSchema(items: { label: string; href?: string }
 export function generateArticleSchema(article: Article) {
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "NewsArticle",
     headline: article.title,
     description: article.excerpt,
+    image: article.featuredImage ? [`${SITE.url}${article.featuredImage.src}`] : undefined,
     author: { "@type": "Organization", name: article.author.name, "@id": ORG_ID },
     publisher: { "@id": ORG_ID },
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
-    image: article.featuredImage ? [`${SITE.url}${article.featuredImage.src}`] : undefined,
     mainEntityOfPage: generateCanonical(article.slug),
     isPartOf: { "@id": WEBSITE_ID },
+    // NewsArticle specific fields for Google News eligibility
+    articleSection: article.category,
+    keywords: article.tags?.join(', '),
+    inLanguage: 'bn-BD',
   };
 }
 
