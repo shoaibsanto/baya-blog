@@ -15,7 +15,7 @@ import { JobSummaryTable } from "@/components/article/JobSummaryTable";
 import { OrganizationInfoBox } from "@/components/article/OrganizationInfoBox";
 import { PositionsTable } from "@/components/article/PositionsTable";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getCategory } from "@/config/site.config";
+import { getCategory, QUALIFICATIONS } from "@/config/site.config";
 import { getArticleBySlug, listRelated, ALL_ARTICLES } from "@/content/articles";
 import { slugify } from "@/lib/content/articles";
 import { renderBlocks, extractHeadings } from "@/lib/render/renderBlocks";
@@ -162,6 +162,44 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <OrganizationInfoBox org={article.job.organization} />
           </>
         )}
+
+        {/* SEO: Internal linking — qualification + category navigation */}
+        <div className="my-6 rounded-md border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold text-foreground">সম্পর্কিত লিংক</h3>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {/* Category link */}
+            {category && (
+              <Link
+                href={`/category/${category.slug}`}
+                className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:border-brand hover:text-brand-dark"
+              >
+                {category.name}
+              </Link>
+            )}
+            {/* Qualification links */}
+            {article.job?.qualificationLevels?.map((level) => {
+              const qualLabel = QUALIFICATIONS.find((q) => q.value === level)?.label ?? level;
+              return (
+                <Link
+                  key={level}
+                  href={`/qualification/${level}`}
+                  className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:border-brand hover:text-brand-dark"
+                >
+                  {qualLabel} চাকরি
+                </Link>
+              );
+            })}
+            {/* Teletalk application guide link for government jobs */}
+            {article.category === "government-jobs" && (
+              <Link
+                href="/teletalk-application-guide"
+                className="rounded-full border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:border-brand hover:text-brand-dark"
+              >
+                টেলিটক আবেদন গাইড
+              </Link>
+            )}
+          </div>
+        </div>
 
         {article.faq && <FAQBlock items={article.faq} />}
 

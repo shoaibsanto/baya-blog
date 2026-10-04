@@ -67,6 +67,21 @@ export function Footer() {
             </ul>
           </div>
         </div>
+        {/* Trust & Policy links */}
+        <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
+          <Link href="/privacy-policy" className="text-xs text-muted hover:text-brand-dark">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="text-xs text-muted hover:text-brand-dark">
+            Terms & Conditions
+          </Link>
+          <Link href="/editorial-policy" className="text-xs text-muted hover:text-brand-dark">
+            Editorial Policy
+          </Link>
+          <Link href="/correction-policy" className="text-xs text-muted hover:text-brand-dark">
+            Correction Policy
+          </Link>
+        </div>
         <p className="mt-8 border-t border-border pt-6 text-xs text-muted">
           © {new Date().getFullYear()} {SITE.name} — এই ওয়েবসাইটের তথ্য শুধুমাত্র সহায়ক উদ্দেশ্যে; চূড়ান্ত
           সিদ্ধান্তের জন্য সংশ্লিষ্ট সরকারি ওয়েবসাইট দেখুন।

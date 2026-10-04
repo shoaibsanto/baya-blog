@@ -137,3 +137,21 @@ export function generateFAQSchema(items: FAQItem[]) {
     })),
   };
 }
+
+/** ItemList schema for category/organization/qualification listing pages. */
+export function generateItemListSchema(items: { name: string; url: string; description?: string }[], name: string) {
+  if (items.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      url: item.url,
+      description: item.description,
+    })),
+  };
+}

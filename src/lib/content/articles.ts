@@ -125,18 +125,24 @@ export function listRelated(article: Article, count = 6): Article[] {
 
   const scored = all.map((a) => {
     let score = 0;
+    // Same organization — strongest signal
     if (a.job?.organization.name === article.job?.organization.name) score += 10;
+    // Same primary category
     if (a.category === article.category) score += 5;
+    // Additional category overlap
     const overlap = a.additionalCategories?.filter((c) =>
       article.additionalCategories?.includes(c),
     );
     if (overlap && overlap.length > 0) score += overlap.length * 2;
+    // Qualification overlap
     const qualOverlap = a.job?.qualificationLevels?.filter((q) =>
       article.job?.qualificationLevels?.includes(q),
     );
     if (qualOverlap && qualOverlap.length > 0) score += qualOverlap.length * 2;
+    // Tag overlap
     const tagOverlap = a.tags?.filter((t) => article.tags?.includes(t));
     if (tagOverlap && tagOverlap.length > 0) score += tagOverlap.length;
+    // Deadline proximity
     if (a.job?.deadline && article.job?.deadline) {
       const diffDays = Math.abs(
         (new Date(a.job.deadline).getTime() - new Date(article.job.deadline).getTime()) / 86_400_000,
@@ -144,6 +150,8 @@ export function listRelated(article: Article, count = 6): Article[] {
       if (diffDays <= 7) score += 2;
       else if (diffDays <= 30) score += 1;
     }
+    // SEO FIX: Prioritize active jobs over expired ones
+    if (a.job?.deadline && daysUntil(a.job.deadline) >= 0) score += 3;
     return { article: a, score };
   });
 
