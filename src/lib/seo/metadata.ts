@@ -3,7 +3,9 @@ import { SITE, DEFAULT_OG_IMAGE } from "@/config/site.config";
 import type { Article } from "@/types";
 
 export function generateCanonical(path: string): string {
-  const clean = path === "/" ? "/" : `/${path.replace(/^\/|\/$/g, "")}/`;
+  // SEO FIX: No trailing slash — matches Next.js routing and live-site URLs.
+  // Trailing-slash canonicals conflicted with server redirects (308).
+  const clean = path === "/" ? "/" : `/${path.replace(/^\/|\/$/g, "")}`;
   return `${SITE.url}${clean}`;
 }
 
